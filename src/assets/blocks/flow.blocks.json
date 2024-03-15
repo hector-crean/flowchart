@@ -1,0 +1,47 @@
+{
+  "blocks": [
+    {
+      "type": "Flow",
+      "id": "0032af8e-4c3d-4127-b7aa-4c92a8c00de1",
+      "props": {
+        "nodes": [
+          {
+            "id": "1",
+            "type": "input",
+            "data": { "label": "Multiplayer" },
+            "position": { "x": 250, "y": 25 }
+          },
+          {
+            "id": "2",
+            "data": { "label": "flowcharts" },
+            "position": { "x": 100, "y": 125 }
+          },
+          {
+            "id": "3",
+            "data": { "label": "React Flow" },
+            "position": { "x": 250, "y": 225 },
+            "style": { "borderColor": "#FF0072" }
+          },
+          {
+            "id": "4",
+            "type": "output",
+            "data": { "label": "Liveblocks" },
+            "position": { "x": 100, "y": 325 },
+            "style": { "borderColor": "#944DFA" }
+          }
+        ],
+        "edges": [
+          { "id": "e1-2", "source": "1", "target": "2", "type": "smoothstep" },
+          { "id": "e2-3", "source": "2", "target": "3", "label": "with" },
+          {
+            "id": "e3-4",
+            "source": "3",
+            "target": "4",
+            "label": "and",
+            "animated": true
+          }
+        ]
+      }
+    }
+  ]
+}
