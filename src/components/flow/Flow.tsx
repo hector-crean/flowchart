@@ -1,5 +1,5 @@
-import { ResizeContainer } from "@/components/resize-container/ResizeContainer";
-import Dagre, { GraphLabel } from 'dagre';
+import Elk, { ElkNode, LayoutOptions } from "elkjs";
+import omit from "lodash/omit";
 import { useCallback, useMemo, useRef, useState } from "react";
 import ReactFlow, {
   Background,
@@ -18,36 +18,91 @@ import ReactFlow, {
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
-  useReactFlow
+  useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { NodeContextMenu } from "./ContextMenu";
 import styles from "./Flow.module.css";
 import { RichTextNode } from "./nodes/RichTextNode";
 
+type GetLayoutedElementsArgs = {
+  nodes: Node[];
+  edges: Edge[];
+};
+const getLayoutedElements = async ({
+  nodes,
+  edges,
+}: GetLayoutedElementsArgs) => {
+  const elkOptions: LayoutOptions = {
+    "elk.algorithm": "layered",
+    "elk.direction": "RIGHT",
+    "elk.edgeRouting": "ORTHOGONAL",
+    "elk.insideSelfLoops.activate": "false",
+    "elk.interactiveLayout": "true",
+    "elk.layered.crossingMinimization.semiInteractive": "true",
+    "elk.layered.cycleBreaking.strategy": "INTERACTIVE",
+    "elk.layered.layering.strategy": "INTERACTIVE",
+    "elk.layered.nodePlacement.strategy": "INTERACTIVE",
+    "elk.layered.spacing.edgeNodeBetweenLayers": "30",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "30",
+    "elk.spacing.nodeNode": "50",
+    "elk.spacing.componentComponent": "50",
+    "elk.separateConnectedComponents": "false",
+  };
 
-const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+  const elk = new Elk({
+    defaultLayoutOptions: elkOptions,
+  });
 
-const getLayoutedElements = (nodes: Array<Node>, edges: Array<Edge>, options: Dagre.GraphLabel) => {
-  g.setGraph(options);
+  const graph: ElkNode = {
+    id: "root",
+    layoutOptions: elkOptions,
+    children: nodes.map((node) => {
+      return {
+        ...node,
+        width: node.width ?? 0,
+        height: node.height ?? 0,
 
-  edges.forEach((edge) => g.setEdge(edge.source, edge.target));
-  nodes.forEach((node) => g.setNode(node.id, node));
+        x: node.position.x,
+        y: node.position.y,
+      };
+    }),
+    edges: edges.map((edge) => {
+      return {
+        ...edge,
+        sources: [edge.sourceHandle ?? edge.source],
+        targets: [edge.target],
+      };
+    }),
+  };
 
-  Dagre.layout(g);
+  const layoutedGraph = await elk.layout(graph);
 
   return {
     nodes: nodes.map((node) => {
-      const { x, y } = g.node(node.id);
-
-      return { ...node, position: { x, y } };
+      const layoutedNode = layoutedGraph.children?.find(
+        (n) => n.id === node.id
+      );
+      if (!layoutedNode) return node;
+      const clone = omit(node, ["width", "height"]);
+      return {
+        id: node.id,
+        type: node.type,
+        data: node.data,
+        position: {
+          x: layoutedNode.x ?? clone.position.x,
+          y: layoutedNode.y ?? clone.position.y,
+        },
+        ...(layoutedNode.width &&
+          layoutedNode.height && {
+            width: layoutedNode.width,
+            height: layoutedNode.height,
+          }),
+      };
     }),
     edges,
   };
 };
-
-
-
 
 interface FlowProps {
   id: string;
@@ -58,10 +113,12 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
   const flowContainerRef = useRef<HTMLDivElement>(null);
   const { fitView } = useReactFlow();
 
-
-  const nodeTypes: NodeTypes = useMemo(() => ({
-    'RichText': RichTextNode
-  }), []);
+  const nodeTypes: NodeTypes = useMemo(
+    () => ({
+      RichText: RichTextNode,
+    }),
+    []
+  );
 
   const edgeTypes: EdgeTypes = useMemo(() => ({}), []);
 
@@ -98,86 +155,65 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
 
   const onNodeContextMenu: NodeMouseHandler = useCallback(
     (event, node) => {
-
-      setSelectedNodeId(node.id)
-
-      console.log(node.id)
-
-
+      setSelectedNodeId(node.id);
     },
     [setSelectedNodeId]
   );
 
-  // Close the context menu if it's open whenever the window is clicked.
-  const onPaneClick = useCallback(() => setSelectedNodeId(null), [setSelectedNodeId]);
-
+  const onPaneClick = useCallback(
+    () => setSelectedNodeId(null),
+    [setSelectedNodeId]
+  );
 
   const onLayout = useCallback(
-    (options: GraphLabel) => {
-      const layouted = getLayoutedElements(nodes, edges, options);
+    (nodes: Array<Node>, edges: Array<Edge>) => {
+      const layouted = getLayoutedElements({
+        nodes,
+        edges,
+      });
 
-      setNodes([...layouted.nodes]);
-      setEdges([...layouted.edges]);
+      layouted.then(({ nodes, edges }) => {
+        setNodes([...nodes]);
+        setEdges([...edges]);
+      });
 
       window.requestAnimationFrame(() => {
         fitView();
       });
     },
-    [nodes, edges]
+    [getLayoutedElements]
   );
-
-
 
   return (
     <NodeContextMenu id={selectedNodeId ?? ""}>
       <div className={styles.wrapper}>
-        <ResizeContainer
-          as="div"
-          className={styles.no_select}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            height: '100%',
-            // aspectRatio: `${aw}/${ah}`,
-          }}
+        <ReactFlow
+          ref={flowContainerRef}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          proOptions={{ account: "paid-pro", hideAttribution: true }}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          // onInit={() => onLayout(nodes, edges)}
+          onPaneClick={onPaneClick}
+          onNodeContextMenu={onNodeContextMenu}
+          fitView
         >
-          {({ width, height }) => (
-            <ReactFlow
-              ref={flowContainerRef}
-              nodeTypes={nodeTypes}
-              edgeTypes={edgeTypes}
-              proOptions={{ account: "paid-pro", hideAttribution: true }}
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              onInit={() => onLayout({ width, height })}
-              onPaneClick={onPaneClick}
-              onNodeContextMenu={onNodeContextMenu}
-            // fitView
-            >
-              <Background
-                color="#ccc"
-                variant={BackgroundVariant.Cross}
-                style={{ zIndex: -1 }}
-              />
-              <MiniMap />
-              <Controls />
-            </ReactFlow>)}
-        </ResizeContainer>
+          <Background
+            color="#ccc"
+            variant={BackgroundVariant.Cross}
+            style={{ zIndex: -1 }}
+          />
+          <MiniMap />
+          <Controls />
+        </ReactFlow>
       </div>
     </NodeContextMenu>
-
   );
 };
 
-
-
-
 export { Flow };
 export type { FlowProps };
-

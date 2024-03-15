@@ -42,7 +42,8 @@
               "x": 10,
               "y": 50
             },
-            "parentNode": "2"
+            "parentNode": "2",
+            "extent": "parent"
           },
           {
             "id": "3",
@@ -100,7 +101,8 @@
               "height": 150,
               "width": 270
             },
-            "parentNode": "4"
+            "parentNode": "4",
+            "extent": "parent"
           },
           {
             "id": "4b1",
@@ -112,7 +114,8 @@
               "y": 40
             },
             "className": "light",
-            "parentNode": "4b"
+            "parentNode": "4b",
+            "extent": "parent"
           },
           {
             "id": "4b2",
@@ -124,7 +127,8 @@
               "y": 100
             },
             "className": "light",
-            "parentNode": "4b"
+            "parentNode": "4b",
+            "extent": "parent"
           }
         ],
         "edges": [
