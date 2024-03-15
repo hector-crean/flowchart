@@ -1,4 +1,3 @@
-import { ProgressionEdge } from "@/models/flow-graph/edges";
 import { curveBumpX, link } from 'd3-shape';
 import { motion } from "framer-motion";
 import { EdgeProps } from "reactflow";
@@ -26,9 +25,11 @@ const draw = {
 };
 
 
+interface ProgressionEdgeData {
 
+}
 
-interface Props extends EdgeProps<ProgressionEdge["data"]> { }
+interface Props extends EdgeProps<ProgressionEdgeData> { }
 
 function ProgressEdgeView({ sourceX, sourceY, targetX, targetY, data }: Props) {
   return (
