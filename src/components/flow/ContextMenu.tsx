@@ -1,19 +1,14 @@
-import * as ContextMenu from '@radix-ui/react-context-menu';
-import { ChevronRightIcon } from '@radix-ui/react-icons';
+import * as ContextMenu from "@radix-ui/react-context-menu";
+import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { ReactNode, useCallback } from "react";
 import { useReactFlow } from "reactflow";
-import styles from './ContextMenu.module.css';
+import styles from "./ContextMenu.module.css";
 
 interface NodeContextMenuProps {
-  id: string
-  children: ReactNode
-
+  id: string;
+  children: ReactNode;
 }
-const NodeContextMenu = ({
-  id,
-  children
-}: NodeContextMenuProps) => {
-
+const NodeContextMenu = ({ id, children }: NodeContextMenuProps) => {
   const { getNode, setNodes, addNodes, setEdges } = useReactFlow();
 
   const duplicateNode = useCallback(() => {
@@ -27,7 +22,6 @@ const NodeContextMenu = ({
 
       addNodes({ ...node, id: `${node.id}-copy`, position });
     }
-
   }, [id, getNode, addNodes]);
 
   const deleteNode = useCallback(() => {
@@ -37,49 +31,62 @@ const NodeContextMenu = ({
 
   return (
     <ContextMenu.Root>
-      <ContextMenu.Trigger className={styles.ContextMenuTrigger}>{children}</ContextMenu.Trigger>
+      <ContextMenu.Trigger className={styles.ContextMenuTrigger}>
+        {children}
+      </ContextMenu.Trigger>
       <ContextMenu.Portal>
-        <ContextMenu.Content className={styles.ContextMenuContent} >
-          <ContextMenu.Item className={styles.ContextMenuItem} onClick={deleteNode}>
+        <ContextMenu.Content className={styles.ContextMenuContent}>
+          <ContextMenu.Item
+            className={styles.ContextMenuItem}
+            onClick={deleteNode}
+          >
             Delete <div className={styles.RightSlot}>⌘+[</div>
           </ContextMenu.Item>
-          <ContextMenu.Item className={styles.ContextMenuItem} onClick={duplicateNode}>
+          <ContextMenu.Item
+            className={styles.ContextMenuItem}
+            onClick={duplicateNode}
+          >
             Duplicate <div className={styles.RightSlot}>⌘+]</div>
           </ContextMenu.Item>
           <ContextMenu.Item className={styles.ContextMenuItem}>
-            Reload <div className="RightSlot">⌘+R</div>
+            Reload <div className={styles.RightSlot}>⌘+R</div>
           </ContextMenu.Item>
           <ContextMenu.Sub>
-            <ContextMenu.SubTrigger className="ContextMenuSubTrigger">
+            <ContextMenu.SubTrigger className={styles.ContextMenuSubTrigger}>
               More Tools
-              <div className="RightSlot">
+              <div className={styles.RightSlot}>
                 <ChevronRightIcon />
               </div>
             </ContextMenu.SubTrigger>
             <ContextMenu.Portal>
               <ContextMenu.SubContent
-                className="ContextMenuSubContent"
+                className={styles.ContextMenuSubContent}
                 sideOffset={2}
                 alignOffset={-5}
               >
-                <ContextMenu.Item className="ContextMenuItem">
-                  Save Page As… <div className="RightSlot">⌘+S</div>
+                <ContextMenu.Item className={styles.ContextMenuItem}>
+                  Save Page As… <div className={styles.RightSlot}>⌘+S</div>
                 </ContextMenu.Item>
-                <ContextMenu.Item className="ContextMenuItem">Create Shortcut…</ContextMenu.Item>
-                <ContextMenu.Item className="ContextMenuItem">Name Window…</ContextMenu.Item>
-                <ContextMenu.Separator className="ContextMenuSeparator" />
-                <ContextMenu.Item className="ContextMenuItem">Developer Tools</ContextMenu.Item>
+                <ContextMenu.Item className={styles.ContextMenuItem}>
+                  Create Shortcut…
+                </ContextMenu.Item>
+                <ContextMenu.Item className={styles.ContextMenuItem}>
+                  Name Window…
+                </ContextMenu.Item>
+                <ContextMenu.Separator
+                  className={styles.ContextMenuSeparator}
+                />
+                <ContextMenu.Item className={styles.ContextMenuItem}>
+                  Developer Tools
+                </ContextMenu.Item>
               </ContextMenu.SubContent>
             </ContextMenu.Portal>
           </ContextMenu.Sub>
-
-
         </ContextMenu.Content>
       </ContextMenu.Portal>
     </ContextMenu.Root>
   );
-}
+};
 
 export { NodeContextMenu };
 export type { NodeContextMenuProps };
-

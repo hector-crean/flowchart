@@ -197,7 +197,7 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          // onInit={() => onLayout(nodes, edges)}
+          onInit={() => onLayout(nodes, edges)}
           onPaneClick={onPaneClick}
           onNodeContextMenu={onNodeContextMenu}
           fitView
