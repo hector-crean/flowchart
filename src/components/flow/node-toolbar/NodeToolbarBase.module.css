@@ -1,0 +1,16 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: fit-content;
+    height: fit-content;
+
+    gap: 5px;
+    padding: 5px 5px;
+
+    background-color: rgba(152, 146, 146, 0.8);
+
+    border-radius: 5px;
+    
+}

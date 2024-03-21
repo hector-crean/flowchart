@@ -31,7 +31,7 @@ interface ProgressionEdgeData {
 
 interface Props extends EdgeProps<ProgressionEdgeData> { }
 
-function ProgressEdgeView({ sourceX, sourceY, targetX, targetY, data }: Props) {
+function ProgressEdge({ sourceX, sourceY, targetX, targetY, data }: Props) {
   return (
     <>
       <motion.path
@@ -50,4 +50,4 @@ function ProgressEdgeView({ sourceX, sourceY, targetX, targetY, data }: Props) {
   );
 }
 
-export { ProgressEdgeView };
+export { ProgressEdge };

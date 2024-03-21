@@ -1,33 +1,19 @@
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
-import { ReactNode, useCallback } from "react";
-import { useReactFlow } from "reactflow";
+import { ReactNode } from "react";
 import styles from "./ContextMenu.module.css";
 
+
+
+
 interface NodeContextMenuProps {
-  id: string;
   children: ReactNode;
 }
-const NodeContextMenu = ({ id, children }: NodeContextMenuProps) => {
-  const { getNode, setNodes, addNodes, setEdges } = useReactFlow();
+const NodeContextMenu = ({ children }: NodeContextMenuProps) => {
 
-  const duplicateNode = useCallback(() => {
-    const node = getNode(id);
 
-    if (node) {
-      const position = {
-        x: node.position.x + 50,
-        y: node.position.y + 50,
-      };
 
-      addNodes({ ...node, id: `${node.id}-copy`, position });
-    }
-  }, [id, getNode, addNodes]);
 
-  const deleteNode = useCallback(() => {
-    setNodes((nodes) => nodes.filter((node) => node.id !== id));
-    setEdges((edges) => edges.filter((edge) => edge.source !== id));
-  }, [id, setNodes, setEdges]);
 
   return (
     <ContextMenu.Root>
@@ -38,13 +24,11 @@ const NodeContextMenu = ({ id, children }: NodeContextMenuProps) => {
         <ContextMenu.Content className={styles.ContextMenuContent}>
           <ContextMenu.Item
             className={styles.ContextMenuItem}
-            onClick={deleteNode}
           >
             Delete <div className={styles.RightSlot}>⌘+[</div>
           </ContextMenu.Item>
           <ContextMenu.Item
             className={styles.ContextMenuItem}
-            onClick={duplicateNode}
           >
             Duplicate <div className={styles.RightSlot}>⌘+]</div>
           </ContextMenu.Item>
@@ -90,3 +74,4 @@ const NodeContextMenu = ({ id, children }: NodeContextMenuProps) => {
 
 export { NodeContextMenu };
 export type { NodeContextMenuProps };
+

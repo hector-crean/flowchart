@@ -1,42 +1,54 @@
-import { ChangeEventHandler, useCallback } from 'react';
-import { Handle, NodeProps, Position } from 'reactflow';
+import { useState } from 'react';
+import { Handle, Node, Position, useReactFlow } from 'reactflow';
 import styles from './RichTextNode.module.css';
 
+import { motion } from 'framer-motion';
 
 
 
 
+interface RichTextNodeData { }
 
-interface RichTextNodeData {
-
-}
-
-interface Props extends NodeProps<RichTextNodeData> { }
+type RichTextNodeProps = Node<RichTextNodeData, 'RichTextNode'>;
 
 
-const RichTextNode = ({ data }: Props) => {
+const RichTextNode = (props: RichTextNodeProps) => {
+
+    const [hovered, setHovered] = useState(false)
 
 
-    const onChange: ChangeEventHandler<HTMLInputElement> = useCallback((evt) => {
-        console.log(evt.target.value);
-    }, []);
+    const { getNode } = useReactFlow()
+
+    const node = getNode(props.id)
+
+    if (!node) return null;
 
     return (
-        <div className={styles.rich_text_node}>
-            <Handle type="target" position={Position.Top} isConnectable={true} />
+        <motion.div
+            key={props.id}
+            className={styles.rich_text_node}
+            onHoverStart={() => setHovered(true)}
+            onHoverEnd={() => setHovered(false)}
+        >
+
             <div>
-                <label htmlFor="text">Text:</label>
-                <input id="text" name="text" onChange={onChange} className="nodrag" />
+                <p>Node content</p>
             </div>
+            {/* Handles */}
             <Handle
                 type="source"
                 position={Position.Bottom}
                 id="a"
                 isConnectable={true}
             />
-            <Handle type="source" position={Position.Bottom} id="b" isConnectable={true} />
-        </div>
+            <Handle
+                type="target"
+                id='b'
+                position={Position.Top}
+                isConnectable={true}
+            />
+        </motion.div>
     );
 }
 
-export { RichTextNode };
+export { RichTextNode, type RichTextNodeProps };

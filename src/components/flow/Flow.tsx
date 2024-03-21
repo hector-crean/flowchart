@@ -1,29 +1,41 @@
 import Elk, { ElkNode, LayoutOptions } from "elkjs";
 import omit from "lodash/omit";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { MouseEvent, useCallback, useMemo, useRef, useState, WheelEvent } from "react";
 import ReactFlow, {
+  addEdge,
   Background,
   BackgroundVariant,
-  Connection,
   Controls,
   Edge,
-  EdgeChange,
   EdgeTypes,
+  getConnectedEdges,
+  getIncomers,
+  getOutgoers,
   MiniMap,
   Node,
-  NodeChange,
   NodeMouseHandler,
+  NodeToolbar,
   NodeTypes,
+  OnConnect,
+  OnMove,
+  OnNodesDelete,
+  OnSelectionChangeFunc,
+  PanOnScrollMode,
+  Position,
   ReactFlowInstance,
-  addEdge,
-  applyEdgeChanges,
-  applyNodeChanges,
-  useReactFlow,
+  SelectionMode,
+  useEdgesState,
+  useNodesState,
+  useReactFlow
 } from "reactflow";
-import "reactflow/dist/style.css";
-import { NodeContextMenu } from "./ContextMenu";
-import styles from "./Flow.module.css";
+import { NodeContextMenu } from "./context-menu/ContextMenu";
+import { ProgressEdge } from "./edges/progress-edge";
 import { RichTextNode } from "./nodes/RichTextNode";
+
+import "reactflow/dist/style.css";
+import "./Flow.css";
+
+const MULTI_SELECT_KEY = ['Meta', 'Shift'];
 
 type GetLayoutedElementsArgs = {
   nodes: Node[];
@@ -95,9 +107,9 @@ const getLayoutedElements = async ({
         },
         ...(layoutedNode.width &&
           layoutedNode.height && {
-            width: layoutedNode.width,
-            height: layoutedNode.height,
-          }),
+          width: layoutedNode.width,
+          height: layoutedNode.height,
+        }),
       };
     }),
     edges,
@@ -113,6 +125,19 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
   const flowContainerRef = useRef<HTMLDivElement>(null);
   const { fitView } = useReactFlow();
 
+  const [isSelectable, setIsSelectable] = useState<boolean>(true);
+  const [isDraggable, setIsDraggable] = useState<boolean>(true);
+  const [isConnectable, setIsConnectable] = useState<boolean>(true);
+  const [zoomOnScroll, setZoomOnScroll] = useState<boolean>(true);
+  const [zoomOnPinch, setZoomOnPinch] = useState<boolean>(true);
+  const [panOnScroll, setPanOnScroll] = useState<boolean>(false);
+  const [panOnScrollMode, setPanOnScrollMode] = useState<PanOnScrollMode>(PanOnScrollMode.Free);
+  const [zoomOnDoubleClick, setZoomOnDoubleClick] = useState<boolean>(true);
+  const [panOnDrag, setPanOnDrag] = useState<boolean>(true);
+  const [captureZoomClick, setCaptureZoomClick] = useState<boolean>(false);
+  const [captureZoomScroll, setCaptureZoomScroll] = useState<boolean>(false);
+  const [captureElementClick, setCaptureElementClick] = useState<boolean>(false);
+
   const nodeTypes: NodeTypes = useMemo(
     () => ({
       RichText: RichTextNode,
@@ -120,50 +145,83 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
     []
   );
 
-  const edgeTypes: EdgeTypes = useMemo(() => ({}), []);
+  const edgeTypes: EdgeTypes = useMemo(() => ({
+    ProgressEdge: ProgressEdge
+  }), []);
 
   const onInit = (reactFlowInstance: ReactFlowInstance) => {
     console.log("flow loaded:", reactFlowInstance);
   };
 
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  // Apply changes to React Flow when the flowchart is interacted with
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => {
-      setNodes((nds) => applyNodeChanges(changes, nds));
-    },
-    [nodes]
-  );
+  const [selectedNodes, setSelectedNodes] = useState<Array<string>>([]);
+  const [selectedEdges, setSelectedEdges] = useState<Array<string>>([]);
 
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) => {
-      setEdges((eds) => applyEdgeChanges(changes, eds));
-    },
-    [edges]
-  );
 
-  const onConnect = useCallback(
-    (connection: Connection) => {
+  //handlers : 
+
+
+  const onSelectionChange: OnSelectionChangeFunc = useCallback(({ nodes, edges }) => {
+    setSelectedNodes(nodes.map((node) => node.id));
+    setSelectedEdges(edges.map((edge) => edge.id));
+  }, [setSelectedNodes, setSelectedEdges])
+
+
+  const onConnect: OnConnect = useCallback(
+    (connection) => {
       setEdges((eds) => addEdge(connection, eds));
     },
-    [edges]
+    []
   );
 
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const onNodesDelete: OnNodesDelete = useCallback(
+    (deleted) => {
+      setEdges(
+        deleted.reduce((acc, node) => {
+          const incomers = getIncomers(node, nodes, edges);
+          const outgoers = getOutgoers(node, nodes, edges);
+          const connectedEdges = getConnectedEdges([node], edges);
+
+          const remainingEdges = acc.filter((edge) => !connectedEdges.includes(edge));
+
+          const createdEdges = incomers.flatMap(({ id: source }) =>
+            outgoers.map(({ id: target }) => ({ id: `${source}->${target}`, source, target }))
+          );
+
+          return [...remainingEdges, ...createdEdges];
+        }, edges)
+      );
+      setNodes(nodes.map(node => ({ ...node, selected: false })))
+    },
+    [nodes, edges, setEdges, selectedNodes]
+  );
+
 
   const onNodeContextMenu: NodeMouseHandler = useCallback(
     (event, node) => {
-      setSelectedNodeId(node.id);
+      event.preventDefault()
+      setSelectedNodes([node.id]);
     },
-    [setSelectedNodeId]
+    [setSelectedNodes]
   );
 
   const onPaneClick = useCallback(
-    () => setSelectedNodeId(null),
-    [setSelectedNodeId]
+    () => setSelectedNodes([]),
+    [setSelectedNodes]
   );
+
+  const onNodeDragStart = useCallback((_: MouseEvent, node: Node) => console.log('drag start', node), []);
+  const onNodeDragStop = useCallback((_: MouseEvent, node: Node) => console.log('drag stop', node), []);
+  const onNodeClick = useCallback((_: MouseEvent, node: Node) => console.log('click', node), []);
+  const onEdgeClick = useCallback((_: MouseEvent, edge: Edge) => console.log('click', edge), []);
+  const onPaneScroll = useCallback((event?: WheelEvent) => console.log('onPaneScroll', event), []);
+  const onPaneContextMenu = useCallback((event: MouseEvent) => console.log('onPaneContextMenu', event), []);
+  const onMoveEnd: OnMove = useCallback((event, viewport) => console.log('onMoveEnd', viewport), []);
+
+
+
 
   const onLayout = useCallback(
     (nodes: Array<Node>, edges: Array<Edge>) => {
@@ -181,34 +239,97 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
         fitView();
       });
     },
-    [getLayoutedElements]
+    [fitView]
   );
 
   return (
-    <NodeContextMenu id={selectedNodeId ?? ""}>
-      <div className={styles.wrapper}>
+    <NodeContextMenu>
+      <div style={{ position: 'fixed', inset: 0 }}>
         <ReactFlow
           ref={flowContainerRef}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
           proOptions={{ account: "paid-pro", hideAttribution: true }}
           nodes={nodes}
           edges={edges}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          elementsSelectable={isSelectable}
+          nodesConnectable={isConnectable}
+          nodesDraggable={isDraggable}
+          zoomOnScroll={zoomOnScroll}
+          zoomOnPinch={zoomOnPinch}
+          panOnScroll={panOnScroll}
+          panOnScrollMode={panOnScrollMode}
+          zoomOnDoubleClick={zoomOnDoubleClick}
+          panOnDrag={panOnDrag}
+          nodeDragThreshold={0}
+          selectNodesOnDrag={false}
+          selectionMode={SelectionMode.Partial}
+          multiSelectionKeyCode={MULTI_SELECT_KEY}
+          fitView={true}
+          snapToGrid={true}
+          snapGrid={snapGrid}
+          fitViewOptions={{ padding: 0.1 /*nodes: [{ id: '1' }]*/ }}
+          attributionPosition="top-right"
+          maxZoom={Infinity}
+          // handlers
+          // -- handlers: nodes
+          onNodeClick={captureElementClick ? onNodeClick : undefined}
+          onNodeDragStart={onNodeDragStart}
+          onNodeDragStop={onNodeDragStop}
           onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onInit={() => onLayout(nodes, edges)}
-          onPaneClick={onPaneClick}
+          onNodesDelete={onNodesDelete}
           onNodeContextMenu={onNodeContextMenu}
-          fitView
+          onNodeDrag={onNodeDrag}
+          onNodeDoubleClick={onNodeDoubleClick}
+          // -- handlers: edges
+          onEdgeClick={captureElementClick ? onEdgeClick : undefined}
+          onEdgesChange={onEdgesChange}
+          onEdgeContextMenu={onEdgeContextMenu}
+          onEdgeMouseEnter={onEdgeMouseEnter}
+          onEdgeMouseMove={onEdgeMouseMove}
+          onEdgeMouseLeave={onEdgeMouseLeave}
+          onEdgeDoubleClick={onEdgeDoubleClick}
+          // -- handlers: pane
+          onPaneClick={captureZoomClick ? onPaneClick : undefined}
+          onPaneScroll={captureZoomScroll ? onPaneScroll : undefined}
+          onPaneContextMenu={captureZoomClick ? onPaneContextMenu : undefined}
+          onPaneMouseMove={onPaneMouseMove}
+          // -- handlers: selection
+          onSelectionDragStart={onSelectionDragStart}
+          onSelectionDrag={onSelectionDrag}
+          onSelectionDragStop={onSelectionDragStop}
+          onSelectionContextMenu={() => { }}
+          onSelectionChange={onSelectionChange}
+
+          onMoveStart={onMoveStart}
+          onMoveEnd={onMoveEnd}
+
+          onConnect={onConnect}
+
+          onInit={() => onLayout(nodes, edges)}
+
+          connectionLineStyle={connectionLineStyle}
+
+
+
+
+
+
+
+
         >
           <Background
             color="#ccc"
-            variant={BackgroundVariant.Cross}
+            variant={BackgroundVariant.Dots}
             style={{ zIndex: -1 }}
           />
-          <MiniMap />
+          <MiniMap zoomable pannable />
           <Controls />
+          <NodeToolbar nodeId={selectedNodes} position={Position.Top} isVisible={selectedNodes.length > 0} >
+            {/* <NodeToolbarBase node={node} /> */}
+            <button>Selection action</button>
+
+          </NodeToolbar>
         </ReactFlow>
       </div>
     </NodeContextMenu>
@@ -217,3 +338,4 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
 
 export { Flow };
 export type { FlowProps };
+
