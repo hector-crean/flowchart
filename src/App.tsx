@@ -4,7 +4,11 @@ import { ReactFlowProvider } from "reactflow";
 import "./App.css";
 
 function App() {
-  return <ReactFlowProvider> <div>{blocks.map(render)}</div></ReactFlowProvider>;
+  return (
+    <ReactFlowProvider>
+      <>{blocks.map(render)}</>
+    </ReactFlowProvider>
+  );
 }
 
 export default App;

@@ -7,9 +7,18 @@
         "nodes": [
           {
             "id": "1",
-            "type": "RichText",
+            "type": "BlockNode",
             "data": {
-              "value": "1 2 3"
+              "blocks": [
+                {
+                  "id": "9433ed99-e3dc-4858-ab10-2ab4036fb56d",
+                  "type": "RichText",
+                  "props": {
+                    "blockId": "d1c00b27-01bb-4cf8-8415-c73d96865a8e",
+                    "content": ""
+                  }
+                }
+              ]
             },
             "position": {
               "x": 250,
@@ -19,9 +28,18 @@
           },
           {
             "id": "2",
-            "type": "RichText",
+            "type": "BlockNode",
             "data": {
-              "value": "1 2 3"
+              "blocks": [
+                {
+                  "id": "bb620471-0489-4169-938c-fa71e873c9ec",
+                  "type": "RichText",
+                  "props": {
+                    "blockId": "95ab49b1-0ada-49a5-8419-e2b612735e9a",
+                    "content": ""
+                  }
+                }
+              ]
             },
             "position": {
               "x": 400,
@@ -31,9 +49,18 @@
           },
           {
             "id": "3",
-            "type": "RichText",
+            "type": "BlockNode",
             "data": {
-              "value": "1 2 3"
+              "blocks": [
+                {
+                  "id": "6afcb7f5-5f79-4c7c-8799-266a0f8ed111",
+                  "type": "RichText",
+                  "props": {
+                    "blockId": "22f58f61-0589-42c5-a676-66b7725ea54b",
+                    "content": ""
+                  }
+                }
+              ]
             },
             "position": {
               "x": 0,
