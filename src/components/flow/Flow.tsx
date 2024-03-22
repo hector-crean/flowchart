@@ -1,12 +1,11 @@
-import Elk, { ElkNode, LayoutOptions } from "elkjs";
-import omit from "lodash/omit";
 import {
   MouseEvent,
   WheelEvent,
   useCallback,
+  useLayoutEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 import ReactFlow, {
   Background,
@@ -32,100 +31,23 @@ import ReactFlow, {
   addEdge,
   getConnectedEdges,
   getIncomers,
+  getNodesBounds,
   getOutgoers,
   useEdgesState,
   useNodesState,
-  useReactFlow,
+  useReactFlow
 } from "reactflow";
+import "reactflow/dist/style.css";
 import { NodeContextMenu } from "./context-menu/ContextMenu";
 import { Controls } from "./control-bar/ControlBar";
 import { ProgressEdge } from "./edges/progress-edge";
-import { BlockNode } from "./nodes/BlockNode";
-
-import "reactflow/dist/style.css";
 import "./Flow.css";
+import useAutoLayout from "./hooks/useAutoLayout";
 import { NodeToolbarBase } from "./node-toolbar/NodeToolbarBase";
+import { BlockNode } from "./nodes/BlockNode";
 
 const MULTI_SELECT_KEY = ["Meta", "Shift"];
 
-type GetLayoutedElementsArgs = {
-  nodes: Node[];
-  edges: Edge[];
-};
-const getLayoutedElements = async ({
-  nodes,
-  edges,
-}: GetLayoutedElementsArgs) => {
-  const elkOptions: LayoutOptions = {
-    "elk.algorithm": "layered",
-    "elk.direction": "RIGHT",
-    "elk.edgeRouting": "ORTHOGONAL",
-    "elk.insideSelfLoops.activate": "false",
-    "elk.interactiveLayout": "true",
-    "elk.layered.crossingMinimization.semiInteractive": "true",
-    "elk.layered.cycleBreaking.strategy": "INTERACTIVE",
-    "elk.layered.layering.strategy": "INTERACTIVE",
-    "elk.layered.nodePlacement.strategy": "INTERACTIVE",
-    "elk.layered.spacing.edgeNodeBetweenLayers": "30",
-    "elk.layered.spacing.nodeNodeBetweenLayers": "30",
-    "elk.spacing.nodeNode": "50",
-    "elk.spacing.componentComponent": "50",
-    "elk.separateConnectedComponents": "false",
-  };
-
-  const elk = new Elk({
-    defaultLayoutOptions: elkOptions,
-  });
-
-  const graph: ElkNode = {
-    id: "root",
-    layoutOptions: elkOptions,
-    children: nodes.map((node) => {
-      return {
-        ...node,
-        width: node.width ?? 0,
-        height: node.height ?? 0,
-
-        x: node.position.x,
-        y: node.position.y,
-      };
-    }),
-    edges: edges.map((edge) => {
-      return {
-        ...edge,
-        sources: [edge.sourceHandle ?? edge.source],
-        targets: [edge.target],
-      };
-    }),
-  };
-
-  const layoutedGraph = await elk.layout(graph);
-
-  return {
-    nodes: nodes.map((node) => {
-      const layoutedNode = layoutedGraph.children?.find(
-        (n) => n.id === node.id
-      );
-      if (!layoutedNode) return node;
-      const clone = omit(node, ["width", "height"]);
-      return {
-        id: node.id,
-        type: node.type,
-        data: node.data,
-        position: {
-          x: layoutedNode.x ?? clone.position.x,
-          y: layoutedNode.y ?? clone.position.y,
-        },
-        ...(layoutedNode.width &&
-          layoutedNode.height && {
-            width: layoutedNode.width,
-            height: layoutedNode.height,
-          }),
-      };
-    }),
-    edges,
-  };
-};
 
 interface FlowProps {
   id: string;
@@ -134,7 +56,9 @@ interface FlowProps {
 }
 const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
   const flowContainerRef = useRef<HTMLDivElement>(null);
-  const { fitView } = useReactFlow();
+  const { fitView, setViewport, fitBounds } = useReactFlow();
+
+
 
   const [isSelectable, setIsSelectable] = useState<boolean>(true);
   const [isDraggable, setIsDraggable] = useState<boolean>(true);
@@ -166,8 +90,9 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
     []
   );
 
+
+
   const onInit = (reactFlowInstance: ReactFlowInstance) => {
-    console.log("flow loaded:", reactFlowInstance);
   };
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -176,14 +101,40 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
   const [selectedNodesIds, setSelectedNodesIds] = useState<Array<string>>([]);
   const [selectedEdges, setSelectedEdges] = useState<Array<string>>([]);
 
+
+  // const cameraTransform = useCallback((x: number, y: number, zoom: number) => {
+  //   setViewport({ x, y, zoom }, { duration: 800 });
+  // }, [setViewport]);
+
+
+
+  // useLayoutEffect(() => resetNodes(), [resetNodes]);
+
+
+
   //handlers :
+
+
+  useAutoLayout({ algorithm: 'elk', direction: 'LR', spacing: [50, 50] });
+
+
+  // every time our nodes change, we want to center the graph again
+  useLayoutEffect(() => {
+    fitView();
+  }, [fitView]);
+
 
   const onSelectionChange: OnSelectionChangeFunc = useCallback(
     ({ nodes, edges }) => {
       setSelectedNodesIds(nodes.map((node) => node.id));
       setSelectedEdges(edges.map((edge) => edge.id));
+
+      const rect = getNodesBounds(nodes);
+      fitBounds(rect)
+
+
     },
-    [setSelectedNodesIds, setSelectedEdges]
+    [setSelectedNodesIds, setSelectedEdges, fitBounds]
   );
 
   const onConnect: OnConnect = useCallback((connection) => {
@@ -216,7 +167,7 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
       );
       setNodes(nodes.map((node) => ({ ...node, selected: false })));
     },
-    [nodes, edges, setEdges, selectedNodesIds]
+    [nodes, edges, setNodes, setEdges]
   );
 
   const onNodeContextMenu: NodeMouseHandler = useCallback(
@@ -227,66 +178,49 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
     [setSelectedNodesIds]
   );
 
-  const onNodeDragStart: NodeDragHandler = useCallback((event, node) => {}, []);
-  const onNodeDragStop: NodeDragHandler = useCallback((event, node) => {}, []);
-  const onNodeClick: NodeMouseHandler = useCallback((event, node) => {}, []);
-  const onNodeDoubleClick: NodeMouseHandler = useCallback((event, node) => {},
-  []);
+  const onNodeDragStart: NodeDragHandler = useCallback((event, node) => { }, []);
+  const onNodeDragStop: NodeDragHandler = useCallback((event, node) => { }, []);
+  const onNodeClick: NodeMouseHandler = useCallback((event, node) => { }, []);
+  const onNodeDoubleClick: NodeMouseHandler = useCallback((event, node) => { },
+    []);
 
-  const onNodeDrag: NodeDragHandler = useCallback(() => {}, []);
+  const onNodeDrag: NodeDragHandler = useCallback(() => { }, []);
   // pane handlers
   const onPaneClick = useCallback(
     () => setSelectedNodesIds([]),
     [setSelectedNodesIds]
   );
 
-  const onPaneScroll = useCallback((event?: WheelEvent) => {}, []);
-  const onPaneContextMenu = useCallback((event: MouseEvent) => {}, []);
-  const onPaneMouseMove = useCallback((event: MouseEvent) => {}, []);
+  const onPaneScroll = useCallback((event?: WheelEvent) => { }, []);
+  const onPaneContextMenu = useCallback((event: MouseEvent) => { }, []);
+  const onPaneMouseMove = useCallback((event: MouseEvent) => { }, []);
 
   // handlers : edge
-  const onEdgeClick = useCallback((_: MouseEvent, edge: Edge) => {}, []);
-  const onEdgeContextMenu: EdgeMouseHandler = useCallback(() => {}, []);
-  const onEdgeMouseEnter: EdgeMouseHandler = useCallback(() => {}, []);
-  const onEdgeMouseMove: EdgeMouseHandler = useCallback(() => {}, []);
-  const onEdgeMouseLeave: EdgeMouseHandler = useCallback(() => {}, []);
-  const onEdgeDoubleClick: EdgeMouseHandler = useCallback(() => {}, []);
+  const onEdgeClick = useCallback((_: MouseEvent, edge: Edge) => { }, []);
+  const onEdgeContextMenu: EdgeMouseHandler = useCallback(() => { }, []);
+  const onEdgeMouseEnter: EdgeMouseHandler = useCallback(() => { }, []);
+  const onEdgeMouseMove: EdgeMouseHandler = useCallback(() => { }, []);
+  const onEdgeMouseLeave: EdgeMouseHandler = useCallback(() => { }, []);
+  const onEdgeDoubleClick: EdgeMouseHandler = useCallback(() => { }, []);
 
   // handlers : move viewport
-  const onMove: OnMove = useCallback((event, viewport) => {}, []);
-  const onMoveEnd: OnMove = useCallback((event, viewport) => {}, []);
-  const onMoveStart: OnMove = useCallback((event, viewport) => {}, []);
+  const onMove: OnMove = useCallback((event, viewport) => { }, []);
+  const onMoveEnd: OnMove = useCallback((event, viewport) => { }, []);
+  const onMoveStart: OnMove = useCallback((event, viewport) => { }, []);
 
   // handlers: selected elements
-  const onSelectionDragStart: SelectionDragHandler = useCallback(() => {}, []);
-  const onSelectionDrag: SelectionDragHandler = useCallback(() => {}, []);
-  const onSelectionDragStop: SelectionDragHandler = useCallback(() => {}, []);
+  const onSelectionDragStart: SelectionDragHandler = useCallback(() => { }, []);
+  const onSelectionDrag: SelectionDragHandler = useCallback(() => { }, []);
+  const onSelectionDragStop: SelectionDragHandler = useCallback(() => { }, []);
   const onSelectionContextMenu = useCallback(
     (
       event: MouseEvent<Element, globalThis.MouseEvent>,
       nodes: Node<any, string | undefined>[]
-    ) => {},
+    ) => { },
     []
   );
 
-  const onLayout = useCallback(
-    (nodes: Array<Node>, edges: Array<Edge>) => {
-      const layouted = getLayoutedElements({
-        nodes,
-        edges,
-      });
 
-      layouted.then(({ nodes, edges }) => {
-        setNodes([...nodes]);
-        setEdges([...edges]);
-      });
-
-      window.requestAnimationFrame(() => {
-        fitView();
-      });
-    },
-    [fitView]
-  );
 
   return (
     <NodeContextMenu>
@@ -311,10 +245,10 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
           selectNodesOnDrag={false}
           selectionMode={SelectionMode.Partial}
           multiSelectionKeyCode={MULTI_SELECT_KEY}
-          fitView={true}
-          snapToGrid={true}
-          snapGrid={[25, 25]}
-          fitViewOptions={{ padding: 0.1 /*nodes: [{ id: '1' }]*/ }}
+          fitView={false}
+          // snapToGrid={true}
+          // snapGrid={[25, 25]}
+          fitViewOptions={undefined}
           attributionPosition="top-right"
           maxZoom={Infinity}
           // -- handlers: nodes
@@ -334,8 +268,8 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
           onEdgeMouseMove={onEdgeMouseMove}
           onEdgeMouseLeave={onEdgeMouseLeave}
           onEdgeDoubleClick={onEdgeDoubleClick}
-          onEdgeUpdate={() => {}}
-          onEdgesDelete={() => {}}
+          onEdgeUpdate={() => { }}
+          onEdgesDelete={() => { }}
           // -- handlers: pane
           onPaneClick={captureZoomClick ? onPaneClick : undefined}
           onPaneScroll={captureZoomScroll ? onPaneScroll : undefined}
@@ -354,7 +288,7 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
           // -- hanlders: connection
           onConnect={onConnect}
           isValidConnection={() => true}
-          onInit={() => onLayout(nodes, edges)}
+          onInit={onInit}
         >
           <Background
             color="#ccc"
@@ -380,3 +314,4 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
 
 export { Flow };
 export type { FlowProps };
+

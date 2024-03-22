@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dagrejs/dagre": "^1.1.0",
+    "@dagrejs/dagre": "^1.1.1",
     "@mantine/colors-generator": "^7.6.2",
     "@mantine/hooks": "^7.6.2",
     "@mantine/tiptap": "^7.6.2",
@@ -26,6 +26,7 @@
     "@tiptap/starter-kit": "^2.2.4",
     "@types/dagre": "^0.7.52",
     "clsx": "^2.1.0",
+    "d3-hierarchy": "^3.1.2",
     "d3-shape": "^3.2.0",
     "dagre": "^0.8.5",
     "elkjs": "^0.9.2",
