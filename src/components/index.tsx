@@ -19,12 +19,11 @@ type RenderableNode = FlowNode | RichTextNode;
 type Renderable = RenderableNode & Identifiable;
 
 const render = ({ type, props, id }: Renderable): ReactNode => {
-
   switch (type) {
     case "Flow":
-      return <FlowWrapper{...props} />;
+      return <FlowWrapper {...props} />;
     case "RichText":
-      return <RichText {...props} />;
+      return <RichText {...props} id={id} />;
     default:
       return null;
   }

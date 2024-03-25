@@ -1,188 +1,160 @@
 {
   "blocks": [
     {
-      "type": "Flow",
       "id": "0032af8e-4c3d-4127-b7aa-4c92a8c00de1",
+      "type": "Flow",
       "props": {
         "nodes": [
           {
+            "data": { "label": "input" },
             "id": "1",
-            "type": "input",
-            "data": {
-              "label": "input"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "input"
           },
           {
+            "data": {
+              "blocks": [
+                {
+                  "id": "12be8139-53e0-4396-b8a7-2473cc06e383",
+                  "props": {
+                    "text": {
+                      "content": [
+                        {
+                          "attrs": { "textAlign": "left" },
+                          "content": [{ "text": "ssssss", "type": "text" }],
+                          "type": "paragraph"
+                        }
+                      ],
+                      "type": "doc"
+                    }
+                  },
+                  "type": "RichText"
+                }
+              ]
+            },
             "id": "2",
-            "type": "BlockNode",
-            "data": {
-              "label": "node 2"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "BlockNode"
           },
           {
+            "data": { "blocks": [] },
             "id": "2a",
-            "data": {
-              "label": "node 2a"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "BlockNode"
           },
           {
+            "data": { "blocks": [] },
             "id": "2b",
-            "data": {
-              "label": "node 2b"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "BlockNode"
           },
           {
+            "data": { "blocks": [] },
             "id": "2c",
-            "data": {
-              "label": "node 2c"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "BlockNode"
           },
           {
+            "data": { "blocks": [] },
             "id": "2d",
-            "data": {
-              "label": "node 2d"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "BlockNode"
           },
           {
+            "data": { "blocks": [] },
             "id": "3",
-            "data": {
-              "label": "node 3"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "BlockNode"
           },
           {
+            "data": { "blocks": [] },
             "id": "4",
-            "data": {
-              "label": "node 4"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "BlockNode"
           },
           {
+            "data": { "blocks": [] },
             "id": "5",
-            "data": {
-              "label": "node 5"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "BlockNode"
           },
           {
+            "data": { "label": "output" },
             "id": "6",
-            "type": "output",
-            "data": {
-              "label": "output"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "output"
           },
           {
+            "data": { "label": "output" },
             "id": "7",
-            "type": "output",
-            "data": {
-              "label": "output"
-            },
-            "position": {
-              "x": 0,
-              "y": 0
-            }
+            "position": { "x": 0, "y": 0 },
+            "type": "output"
           }
         ],
+        "id": "641e8a6a-a911-4659-b583-d689de7d2c3f",
         "edges": [
           {
+            "animated": true,
             "id": "e12",
             "source": "1",
             "target": "2",
-            "type": "default",
-            "animated": true
+            "type": "default"
           },
           {
+            "animated": true,
             "id": "e13",
             "source": "1",
             "target": "3",
-            "type": "default",
-            "animated": true
+            "type": "default"
           },
           {
+            "animated": true,
             "id": "e22a",
             "source": "2",
             "target": "2a",
-            "type": "default",
-            "animated": true
+            "type": "default"
           },
           {
+            "animated": true,
             "id": "e22b",
             "source": "2",
             "target": "2b",
-            "type": "default",
-            "animated": true
+            "type": "default"
           },
           {
+            "animated": true,
             "id": "e22c",
             "source": "2",
             "target": "2c",
-            "type": "default",
-            "animated": true
+            "type": "default"
           },
           {
+            "animated": true,
             "id": "e2c2d",
             "source": "2c",
             "target": "2d",
-            "type": "default",
-            "animated": true
+            "type": "default"
           },
           {
+            "animated": true,
             "id": "e45",
             "source": "4",
             "target": "5",
-            "type": "default",
-            "animated": true
+            "type": "default"
           },
           {
+            "animated": true,
             "id": "e56",
             "source": "5",
             "target": "6",
-            "type": "default",
-            "animated": true
+            "type": "default"
           },
           {
+            "animated": true,
             "id": "e57",
             "source": "5",
             "target": "7",
-            "type": "default",
-            "animated": true
+            "type": "default"
           }
         ]
       }

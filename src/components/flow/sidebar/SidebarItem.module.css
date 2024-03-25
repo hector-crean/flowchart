@@ -1,0 +1,31 @@
+.sidebar_items {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+}
+
+.sidebar_item {
+  opacity: 0.5;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  background-color: red;
+}
+
+.sidebar_item > svg {
+  stroke: var(--text);
+}
+
+.sidebar_item:hover {
+  opacity: 1;
+  background-color: var(--background);
+}
+
+.sidebar_item-drag-image {
+  transform: translate(0, 0);
+  position: absolute;
+  top: -100000px;
+  left: -1000000px;
+}

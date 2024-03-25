@@ -10,10 +10,11 @@ interface NodeToolbarBaseProps {
   children?: ReactNode;
 }
 
-const NodeToolbarBase = ({ onAddNode, onDeleteNode, children }: NodeToolbarBaseProps) => {
-
-
-
+const NodeToolbarBase = ({
+  onAddNode,
+  onDeleteNode,
+  children,
+}: NodeToolbarBaseProps) => {
   return (
     <AnimatePresence mode="wait">
       <motion.div className={styles.container}>

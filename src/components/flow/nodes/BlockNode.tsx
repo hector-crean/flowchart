@@ -13,7 +13,6 @@ interface BlockNodeData {
 type BlockNodeProps = Node<BlockNodeData, "BlockNode">;
 
 const BlockNode = (props: BlockNodeProps) => {
-
   const { getNode, addNodes, deleteElements } = useReactFlow();
 
   const [hovered, setHovered] = useState(false);
@@ -29,9 +28,10 @@ const BlockNode = (props: BlockNodeProps) => {
 
     addNodes([
       {
-        ...node, id: `${node.id}-copy`,
+        ...node,
+        id: `${node.id}-copy`,
         position,
-      }
+      },
     ]);
   }, [node, addNodes]);
 
@@ -40,10 +40,7 @@ const BlockNode = (props: BlockNodeProps) => {
     deleteElements({ nodes: [node] });
   }, [deleteElements, node]);
 
-
-
   if (!node) return null;
-
 
   return (
     <motion.div
@@ -57,12 +54,9 @@ const BlockNode = (props: BlockNodeProps) => {
         position={Position.Top}
         isVisible={props.selected}
       >
-        <NodeToolbarBase
-          onAddNode={onAddNode}
-          onDeleteNode={onDeleteNode}
-        />
+        <NodeToolbarBase onAddNode={onAddNode} onDeleteNode={onDeleteNode} />
       </NodeToolbar>
-      <div>{props.data.blocks.map(render)}</div>
+      {props.data.blocks.map(render)}
       {/* Handles */}
       <Handle
         type="source"

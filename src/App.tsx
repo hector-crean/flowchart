@@ -1,9 +1,16 @@
+import { blocks } from "@/assets/blocks/flow.blocks.json";
+import { useMemo } from "react";
 import "./App.css";
-import { FlowWrapper } from "./components/flow/Flow";
-import { edges, nodes } from './initialElements';
+import { render } from "./components";
+import { RichTextModal } from "./components/rich-text/Modal";
+
 function App() {
+  const Blocks = useMemo(() => blocks.map(render), [render, blocks]);
   return (
-    <FlowWrapper id="flow-1" nodes={nodes} edges={edges} />
+    <>
+      {Blocks}
+      <RichTextModal />
+    </>
   );
 }
 

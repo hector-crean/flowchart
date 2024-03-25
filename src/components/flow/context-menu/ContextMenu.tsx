@@ -1,20 +1,21 @@
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { ReactNode } from "react";
+import { XYPosition } from "reactflow";
 import styles from "./ContextMenu.module.css";
 
-
-
-
 interface NodeContextMenuProps {
+  onCut: VoidFunction;
+  onCopy: VoidFunction;
+  onPaste: (clipboard?: XYPosition) => void;
   children: ReactNode;
 }
-const NodeContextMenu = ({ children }: NodeContextMenuProps) => {
-
-
-
-
-
+const NodeContextMenu = ({
+  children,
+  onCopy,
+  onCut,
+  onPaste,
+}: NodeContextMenuProps) => {
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger className={styles.ContextMenuTrigger}>
@@ -24,16 +25,21 @@ const NodeContextMenu = ({ children }: NodeContextMenuProps) => {
         <ContextMenu.Content className={styles.ContextMenuContent}>
           <ContextMenu.Item
             className={styles.ContextMenuItem}
+            onClick={() => onCut()}
           >
             Delete <div className={styles.RightSlot}>⌘+[</div>
           </ContextMenu.Item>
           <ContextMenu.Item
             className={styles.ContextMenuItem}
+            onClick={() => onPaste({ x: 0, y: 0 })}
           >
             Duplicate <div className={styles.RightSlot}>⌘+]</div>
           </ContextMenu.Item>
-          <ContextMenu.Item className={styles.ContextMenuItem}>
-            Reload <div className={styles.RightSlot}>⌘+R</div>
+          <ContextMenu.Item
+            className={styles.ContextMenuItem}
+            onClick={() => onCopy()}
+          >
+            Copy <div className={styles.RightSlot}>⌘+R</div>
           </ContextMenu.Item>
           <ContextMenu.Sub>
             <ContextMenu.SubTrigger className={styles.ContextMenuSubTrigger}>
@@ -74,4 +80,3 @@ const NodeContextMenu = ({ children }: NodeContextMenuProps) => {
 
 export { NodeContextMenu };
 export type { NodeContextMenuProps };
-
