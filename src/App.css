@@ -1,11 +1,11 @@
+html,
+body,
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  height: 100%;
+  margin: 0;
 }
 
-.wrapper {
-  position: fixed;
-  inset: 0;
+#root {
+  min-height: 100dvh;
+  min-width: 100dvw;
 }

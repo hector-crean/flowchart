@@ -1,13 +1,9 @@
-import { blocks } from "@/assets/blocks/flow.blocks.json";
-import { render } from "@/components";
-import { ReactFlowProvider } from "reactflow";
 import "./App.css";
-
+import { FlowWrapper } from "./components/flow/Flow";
+import { edges, nodes } from './initialElements';
 function App() {
   return (
-    <ReactFlowProvider>
-      <>{blocks.map(render)}</>
-    </ReactFlowProvider>
+    <FlowWrapper id="flow-1" nodes={nodes} edges={edges} />
   );
 }
 

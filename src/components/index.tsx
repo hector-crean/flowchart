@@ -2,8 +2,7 @@
 
 import { ReactNode } from "react";
 
-import { v4 } from "uuid";
-import { Flow, FlowProps } from "./flow/Flow";
+import { FlowProps, FlowWrapper } from "./flow/Flow";
 import { RichText, RichTextProps } from "./rich-text/RichText";
 
 type UuidV4 = `${string}-${string}-${string}-${string}-${string}`;
@@ -20,11 +19,10 @@ type RenderableNode = FlowNode | RichTextNode;
 type Renderable = RenderableNode & Identifiable;
 
 const render = ({ type, props, id }: Renderable): ReactNode => {
-  const uuid = v4() as UuidV4;
 
   switch (type) {
     case "Flow":
-      return <Flow {...props} />;
+      return <FlowWrapper{...props} />;
     case "RichText":
       return <RichText {...props} />;
     default:

@@ -16,6 +16,8 @@ export type LayoutOptions = {
 
 function useAutoLayout(options: LayoutOptions) {
   const { setNodes, setEdges } = useReactFlow();
+  
+  
   const nodesInitialized = useNodesInitialized();
   // Here we are storing a map of the nodes and edges in the flow. By using a
   // custom equality function as the second argument to `useStore`, we can make
@@ -45,6 +47,7 @@ function useAutoLayout(options: LayoutOptions) {
     // The callback passed to `useEffect` cannot be `async` itself, so instead we
     // create an async function here and call it immediately afterwards.
     const runLayout = async () => {
+      console.log('run layout')
       const layoutAlgorithm = layoutAlgorithms[options.algorithm];
       const nodes = [...elements.nodeMap.values()];
       const edges = [...elements.edgeMap.values()];
