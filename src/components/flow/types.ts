@@ -1,18 +1,15 @@
-import { Node, } from "reactflow";
-import { BlockNodeProps } from "./nodes/BlockNode";
-
-
-type BaseNodeProps = { label?: string; }
-type InputNode = Node<BaseNodeProps, 'input'>
-type OutputNode = Node<BaseNodeProps, 'output'>
-type DefaultNode = Node<BaseNodeProps, 'default'>
-type GroupNode = Node<BaseNodeProps, 'group'>
-
-type TypedNode = BlockNodeProps | InputNode | OutputNode | DefaultNode | GroupNode
+import { BuiltInEdge, BuiltInNode } from '@xyflow/react';
+import { PolymorphicEdgeType } from './edges/PolymorphicEdge';
+import { PolymorphicNodeType } from "./nodes/PolymorphicNode";
+import { ShapeNodeType } from "./nodes/ShapeNode";
 
 
 
+type FlowNodeType = ShapeNodeType | PolymorphicNodeType | BuiltInNode
+type FlowEdgeType = BuiltInEdge | PolymorphicEdgeType
 
-export type { TypedNode };
+
+
+export type { FlowEdgeType, FlowNodeType };
 
 

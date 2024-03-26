@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
 import {
-  type Edge,
-  type Node,
   useNodesInitialized,
   useReactFlow,
   useStore,
-} from 'reactflow';
+  type Edge,
+  type Node,
+} from "@xyflow/react";
+import { useEffect } from 'react';
 
 import layoutAlgorithms, { type LayoutAlgorithmOptions } from '../algorithms';
 import { getSourceHandlePosition, getTargetHandlePosition } from '../utils';
@@ -16,8 +16,8 @@ export type LayoutOptions = {
 
 function useAutoLayout(options: LayoutOptions) {
   const { setNodes, setEdges } = useReactFlow();
-  
-  
+
+
   const nodesInitialized = useNodesInitialized();
   // Here we are storing a map of the nodes and edges in the flow. By using a
   // custom equality function as the second argument to `useStore`, we can make
@@ -25,7 +25,7 @@ function useAutoLayout(options: LayoutOptions) {
   // actually trigger a layout change.
   const elements = useStore(
     (state) => ({
-      nodeMap: state.nodeInternals,
+      nodeMap: state.nodeLookup,
       edgeMap: state.edges.reduce(
         (acc, edge) => acc.set(edge.id, edge),
         new Map()

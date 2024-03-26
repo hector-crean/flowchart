@@ -1,33 +1,31 @@
-
-  .react-flow__node {
-
-    border-radius: 5px;
-    background-color: salmon;
-
-
-    &.selected {
-        stroke: #0066ff;
-        stroke-width: 2px;
-        filter: brightness(1.1);
-        border: 1px solid red;
-
-      }
+.xy-flow__node {
+  background-color: red;
+  &.selected {
+    stroke: #0066ff;
+    stroke-width: 2px;
+    filter: brightness(1.1);
+    border: 1px solid red;
   }
+}
 
+.xy-flow__handle {
+}
 
-  .react-flow__handle {
-  }
+.xy-flow__handle-top {
+}
 
-  .react-flow__handle-top {}
+.xy-flow__handle-right {
+}
 
-  .react-flow__handle-right	 {}
+.xy-flow__handle-bottom {
+}
 
-  .react-flow__handle-bottom{}
+.xy-flow__handle-left {
+}
 
-  .react-flow__handle-left	{}
+.xy-flow__handle-connecting {
+}
 
-  .react-flow__handle-connecting {}
-
-  .react-flow__handle-valid	{
-    background-color: green;
-  }
+.xy-flow__handle-valid {
+  background-color: green;
+}

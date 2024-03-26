@@ -1,7 +1,7 @@
-import { type Node, type Edge } from 'reactflow';
+import { type Edge, type Node } from "@xyflow/react";
 
-import dagre from './dagre';
 import d3Hierarchy from './d3-hierarchy';
+import dagre from './dagre';
 import elk from './elk';
 
 // the layout direction (T = top, R = right, B = bottom, L = left, TB = top to bottom, ...)

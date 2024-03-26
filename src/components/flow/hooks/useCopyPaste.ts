@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
 import {
     Edge,
     KeyCode,
@@ -8,7 +7,8 @@ import {
     useKeyPress,
     useReactFlow,
     useStore,
-} from 'reactflow';
+} from "@xyflow/react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function useCopyPaste<NodeData, EdgeData>() {
     const mousePosRef = useRef<XYPosition>({ x: 0, y: 0 });

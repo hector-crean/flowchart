@@ -1,4 +1,4 @@
-import { Position } from 'reactflow';
+import { Position } from "@xyflow/react";
 import { Direction } from './algorithms';
 
 export function getSourceHandlePosition(direction: Direction) {

@@ -1,7 +1,7 @@
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
+import { XYPosition } from "@xyflow/react";
 import { ReactNode } from "react";
-import { XYPosition } from "reactflow";
 import styles from "./ContextMenu.module.css";
 
 interface NodeContextMenuProps {

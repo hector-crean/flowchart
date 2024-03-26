@@ -5,23 +5,27 @@ import { Tool } from "../tool/Tool";
 import styles from "./NodeToolbarBase.module.css";
 
 interface NodeToolbarBaseProps {
-  onDeleteNode: () => void;
-  onAddNode: () => void;
+  onDeleteNodes: () => void;
+  onAddNodes: () => void;
   children?: ReactNode;
 }
 
 const NodeToolbarBase = ({
-  onAddNode,
-  onDeleteNode,
+  onAddNodes,
+  onDeleteNodes,
   children,
 }: NodeToolbarBaseProps) => {
   return (
     <AnimatePresence mode="wait">
       <motion.div className={styles.container}>
-        <Tool onPointerDown={onAddNode} disabled={false} title="Add Node">
+        <Tool onPointerDown={onAddNodes} disabled={false} title="Add Node">
           <PlusIcon width={15} height={15} />
         </Tool>
-        <Tool onPointerDown={onDeleteNode} disabled={false} title="Delete Node">
+        <Tool
+          onPointerDown={onDeleteNodes}
+          disabled={false}
+          title="Delete Node"
+        >
           <MinusIcon width={15} height={15} />
         </Tool>
         {children}

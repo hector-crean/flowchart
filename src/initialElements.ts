@@ -1,33 +1,33 @@
-import { type Edge, type Node } from 'reactflow';
+import { type Edge, type Node } from "@xyflow/react";
 
 export const nodes: Node[] = [
   {
     id: '1',
-    type: 'BlockNode',
+    type: 'PolymorphicNode',
     data: { label: 'Node 1' },
     position: { x: 0, y: 0 },
   },
   {
     id: '2',
-    type: 'BlockNode',
+    type: 'PolymorphicNode',
     data: { label: 'Node 2' },
     position: { x: 0, y: 0 },
   },
   {
     id: '3',
-    type: 'BlockNode',
+    type: 'PolymorphicNode',
     data: { label: 'Node 3' },
     position: { x: 0, y: 0 },
   },
   {
     id: '4',
-    type: 'BlockNode',
+    type: 'PolymorphicNode',
     data: { label: 'Node 4' },
     position: { x: 0, y: 0 },
   },
   {
     id: '5',
-    type: 'BlockNode',
+    type: 'PolymorphicNode',
     data: { label: 'Node 5' },
     position: { x: 0, y: 0 },
   },

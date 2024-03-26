@@ -1,13 +1,4 @@
-import { motion } from "framer-motion";
 import {
-  DragEvent,
-  DragEventHandler,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import ReactFlow, {
   Background,
   BackgroundVariant,
   ConnectionLineType,
@@ -15,11 +6,16 @@ import ReactFlow, {
   EdgeTypes,
   MarkerType,
   MiniMap,
+  Node,
+  NodeToolbar,
   NodeTypes,
   OnConnect,
   OnNodesDelete,
+  OnSelectionChangeFunc,
   PanOnScrollMode,
-  Panel,
+  Position,
+  ReactFlow,
+  ReactFlowJsonObject,
   ReactFlowProvider,
   SelectionMode,
   addEdge,
@@ -29,19 +25,32 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
   useReactFlow,
-} from "reactflow";
-import "reactflow/dist/style.css";
+} from "@xyflow/react";
+import { motion } from "framer-motion";
+import {
+  DragEvent,
+  DragEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Renderable } from "..";
 import "./Flow.css";
 import styles from "./Flow.module.css";
 import { NodeContextMenu } from "./context-menu/ContextMenu";
 import { Controls } from "./control-bar/ControlBar";
-import { ProgressEdge } from "./edges/progress-edge";
+import { PolymorphicEdge } from "./edges/PolymorphicEdge";
+import { ConnectionStatus } from "./edges/validation/ConnectionStatus";
 import useAutoLayout, { LayoutOptions } from "./hooks/useAutoLayout";
 import useCopyPaste from "./hooks/useCopyPaste";
-import { BlockNode, BlockNodeProps } from "./nodes/BlockNode";
-import Sidebar from "./sidebar/Sidebar";
-import { TypedNode } from "./types";
+import { NodeToolbarBase } from "./node-toolbar/NodeToolbarBase";
+import { FlowNodeProps } from "./nodes";
+import { PolymorphicNode, PolymorphicNodeProps } from "./nodes/PolymorphicNode";
+import { ShapeNode } from "./nodes/ShapeNode";
+
+import "@xyflow/react/dist/style.css";
 
 const proOptions = {
   account: "paid-pro",
@@ -56,11 +65,18 @@ const defaultEdgeOptions = {
 
 interface FlowProps {
   id: string;
-  nodes: Array<TypedNode>;
+  nodes: Array<FlowNodeProps>;
   edges: Array<Edge>;
 }
-const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
-  const { fitView, screenToFlowPosition } = useReactFlow();
+const Flow = ({ id, nodes: initialNodes, edges: initialEdges }: FlowProps) => {
+  const {
+    fitView,
+    screenToFlowPosition,
+    toObject,
+    addEdges,
+    addNodes,
+    deleteElements,
+  } = useReactFlow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -84,14 +100,15 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
 
   const nodeTypes: NodeTypes = useMemo(
     () => ({
-      BlockNode: BlockNode,
+      PolymorphicNode: PolymorphicNode,
+      ShapeNode: ShapeNode,
     }),
     []
   );
 
   const edgeTypes: EdgeTypes = useMemo(
     () => ({
-      ProgressEdge: ProgressEdge,
+      PolymorphicEdge: PolymorphicEdge,
     }),
     []
   );
@@ -99,7 +116,7 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
   const layoutOptions: LayoutOptions = useMemo(
     () => ({
       algorithm: "dagre",
-      direction: "BT",
+      direction: "LR",
       spacing: [50, 50],
     }),
     []
@@ -113,6 +130,7 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
   }, [layoutComputed === true]);
 
   const { cut, copy, paste, bufferedNodes } = useCopyPaste();
+
   const canCopy = nodes.some(({ selected }) => selected);
   const canPaste = bufferedNodes.length > 0;
 
@@ -165,13 +183,14 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
     // so that a node is added at the correct position even when viewport is translated and/or zoomed in
     const position = screenToFlowPosition({ x: evt.clientX, y: evt.clientY });
 
-    const newNode: BlockNodeProps = {
-      id: Date.now().toString(),
-      type: "BlockNode",
+    const newNode: PolymorphicNodeProps = {
+      id: uuidv4(),
+      type: "PolymorphicNode",
       position,
       style: { width: 100, height: 100 },
       data: {
         blocks: [renderable],
+        accentColor: "red",
       },
       selected: true,
     };
@@ -180,6 +199,62 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
       nodes.map((n) => ({ ...n, selected: false })).concat([newNode])
     );
   };
+
+  const onSave = useCallback(() => {
+    const flow = toObject();
+    console.log(flow);
+
+    localStorage.setItem(id, JSON.stringify(flow));
+  }, [toObject]);
+
+  const onRestore = useCallback(() => {
+    const restoreFlow = async () => {
+      const str = localStorage.getItem(id);
+      if (!str) return;
+      const flow: ReactFlowJsonObject<any, any> = JSON.parse(str);
+
+      if (flow) {
+        setNodes(flow.nodes);
+        setEdges(flow.edges);
+      }
+    };
+
+    restoreFlow();
+  }, [setEdges, setNodes, localStorage]);
+
+  const [selectedNodes, setSelectedNodes] = useState<Array<Node>>([]);
+  const [selectedEdges, setSelectedEdges] = useState<Array<Edge>>([]);
+
+  const onSelectionChange: OnSelectionChangeFunc = useCallback(
+    ({ nodes, edges }) => {
+      setSelectedNodes(nodes);
+      setSelectedEdges(edges);
+    },
+    []
+  );
+
+  const onAddNodes = useCallback(
+    (nodes: Array<Node>) => {
+      const newNodes = nodes.map((node) => ({
+        ...node,
+        id: uuidv4(),
+        position: {
+          x: 0,
+          y: 0,
+        },
+      }));
+
+      addNodes(newNodes);
+    },
+    [addNodes]
+  );
+
+  const onDeleteNodes = useCallback(
+    (nodes: Array<Node>) => {
+      deleteElements({ nodes });
+    },
+    [deleteElements]
+  );
 
   return (
     <motion.div
@@ -212,6 +287,7 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
           nodeDragThreshold={0}
           selectNodesOnDrag={false}
           selectionMode={SelectionMode.Partial}
+          onSelectionChange={onSelectionChange}
           fitView={true}
           snapToGrid={true}
           snapGrid={[25, 25]}
@@ -220,7 +296,6 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
           maxZoom={Infinity}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          //  onConnect={(connection) => setEdges((eds) => addEdge(connection, eds))}
           onConnect={onConnectNodes}
           onNodesDelete={onNodesDelete}
           onDragOver={onDragOver}
@@ -235,10 +310,20 @@ const Flow = ({ nodes: initialNodes, edges: initialEdges }: FlowProps) => {
             style={{ zIndex: -1 }}
           />
           <MiniMap zoomable pannable />
-          <Controls />
-          <Panel position="top-left">
+          <Controls onSave={onSave} onRestore={onRestore} />
+          {/* <Panel position="top-left">
             <Sidebar />
-          </Panel>
+          </Panel> */}
+          <ConnectionStatus />
+          <NodeToolbar
+            nodeId={selectedNodes.map((node) => node.id)}
+            position={Position.Top}
+          >
+            <NodeToolbarBase
+              onAddNodes={() => onAddNodes(selectedNodes)}
+              onDeleteNodes={() => onDeleteNodes(selectedNodes)}
+            />
+          </NodeToolbar>
         </ReactFlow>
       </NodeContextMenu>
     </motion.div>

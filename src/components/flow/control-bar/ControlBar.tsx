@@ -1,4 +1,3 @@
-import { ReactNode, memo } from "react";
 import {
   FitViewOptions,
   Panel,
@@ -7,16 +6,19 @@ import {
   useStore,
   useStoreApi,
   type ReactFlowState,
-} from "reactflow";
+} from "@xyflow/react";
+import { ReactNode, memo } from "react";
 import { shallow } from "zustand/shallow";
 import styles from "./ControlBar.module.css";
 
 import {
+  DownloadIcon,
   GroupIcon,
   LockClosedIcon,
   LockOpen1Icon,
   MinusIcon,
   PlusIcon,
+  ResetIcon,
 } from "@radix-ui/react-icons";
 import { Tool } from "../tool/Tool";
 
@@ -27,6 +29,8 @@ const selector = (s: ReactFlowState) => ({
 });
 
 export type ControlProps = {
+  onSave: () => void;
+  onRestore: () => void;
   /** Show button for zoom in/out */
   showZoom?: boolean;
   /** Show button for fit view */
@@ -57,6 +61,8 @@ export type ControlProps = {
 };
 
 function ControlsComponent({
+  onRestore,
+  onSave,
   style,
   showZoom = true,
   showFitView = true,
@@ -72,6 +78,7 @@ function ControlsComponent({
   "aria-label": ariaLabel = "React Flow controls",
 }: ControlProps) {
   const store = useStoreApi();
+
   const { isInteractive, minZoomReached, maxZoomReached } = useStore(
     selector,
     shallow
@@ -105,13 +112,29 @@ function ControlsComponent({
 
   return (
     <Panel
-      // className={cc(["react-flow__controls", className])}
+      // className={cc(["xy-flow__controls", className])}
       className={styles.control_bar_container}
       position={position}
       style={style}
       data-testid="rf__controls"
       aria-label={ariaLabel}
     >
+      <Tool
+        onPointerDown={onSave}
+        title="Save"
+        aria-label="Save"
+        disabled={false}
+      >
+        <DownloadIcon />
+      </Tool>
+      <Tool
+        onPointerDown={onRestore}
+        title="Restore"
+        aria-label="Restore"
+        disabled={false}
+      >
+        <ResetIcon />
+      </Tool>
       {showZoom && (
         <>
           <Tool
