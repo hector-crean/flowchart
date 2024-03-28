@@ -1,30 +1,33 @@
 import {
+  addEdge,
   Background,
   BackgroundVariant,
   ConnectionLineType,
   Edge,
   EdgeTypes,
+  getConnectedEdges,
+  getIncomers,
+  getOutgoers,
   MarkerType,
   MiniMap,
+
   Node,
   NodeToolbar,
   NodeTypes,
   OnConnect,
   OnNodesDelete,
   OnSelectionChangeFunc,
+  Panel,
   PanOnScrollMode,
   Position,
   ReactFlow,
   ReactFlowJsonObject,
   ReactFlowProvider,
   SelectionMode,
-  addEdge,
-  getConnectedEdges,
-  getIncomers,
-  getOutgoers,
   useEdgesState,
   useNodesState,
   useReactFlow,
+  XYPosition
 } from "@xyflow/react";
 import { motion } from "framer-motion";
 import {
@@ -36,7 +39,6 @@ import {
   useState,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { Renderable } from "..";
 import "./Flow.css";
 import styles from "./Flow.module.css";
 import { NodeContextMenu } from "./context-menu/ContextMenu";
@@ -44,13 +46,16 @@ import { Controls } from "./control-bar/ControlBar";
 import { PolymorphicEdge } from "./edges/PolymorphicEdge";
 import { ConnectionStatus } from "./edges/validation/ConnectionStatus";
 import useAutoLayout, { LayoutOptions } from "./hooks/useAutoLayout";
-import useCopyPaste from "./hooks/useCopyPaste";
 import { NodeToolbarBase } from "./node-toolbar/NodeToolbarBase";
-import { FlowNodeProps } from "./nodes";
-import { PolymorphicNode, PolymorphicNodeProps } from "./nodes/PolymorphicNode";
+import { PolymorphicNode } from "./nodes/PolymorphicNode";
 import { ShapeNode } from "./nodes/ShapeNode";
 
 import "@xyflow/react/dist/style.css";
+
+
+import { RichTextNode } from "./nodes/RichTextNode";
+import Sidebar from "./sidebar/Sidebar";
+import { FlowEdgeType, FlowNodeType } from "./types";
 
 const proOptions = {
   account: "paid-pro",
@@ -65,8 +70,8 @@ const defaultEdgeOptions = {
 
 interface FlowProps {
   id: string;
-  nodes: Array<FlowNodeProps>;
-  edges: Array<Edge>;
+  nodes: Array<FlowNodeType>;
+  edges: Array<FlowEdgeType>;
 }
 const Flow = ({ id, nodes: initialNodes, edges: initialEdges }: FlowProps) => {
   const {
@@ -102,6 +107,7 @@ const Flow = ({ id, nodes: initialNodes, edges: initialEdges }: FlowProps) => {
     () => ({
       PolymorphicNode: PolymorphicNode,
       ShapeNode: ShapeNode,
+      RichTextNode: RichTextNode
     }),
     []
   );
@@ -115,9 +121,9 @@ const Flow = ({ id, nodes: initialNodes, edges: initialEdges }: FlowProps) => {
 
   const layoutOptions: LayoutOptions = useMemo(
     () => ({
-      algorithm: "dagre",
-      direction: "LR",
-      spacing: [50, 50],
+      algorithm: 'dagre',
+      direction: 'LR',
+      spacing: [100, 100],
     }),
     []
   );
@@ -127,12 +133,12 @@ const Flow = ({ id, nodes: initialNodes, edges: initialEdges }: FlowProps) => {
   useEffect(() => {
     const fitted = fitView();
     setLayoutComputed(fitted);
-  }, [layoutComputed === true]);
+  }, [layoutComputed === true, fitView]);
 
-  const { cut, copy, paste, bufferedNodes } = useCopyPaste();
+  // const { cut, copy, paste, bufferedNodes } = useCopyPaste();
 
-  const canCopy = nodes.some(({ selected }) => selected);
-  const canPaste = bufferedNodes.length > 0;
+  // const canCopy = nodes.some(({ selected }) => selected);
+  // const canPaste = bufferedNodes.length > 0;
 
   const onConnectNodes: OnConnect = useCallback((connection) => {
     setEdges((eds) => addEdge(connection, eds));
@@ -164,7 +170,7 @@ const Flow = ({ id, nodes: initialNodes, edges: initialEdges }: FlowProps) => {
       );
       setNodes(nodes.map((node) => ({ ...node, selected: false })));
     },
-    [nodes, edges, setEdges]
+    [nodes, edges, setEdges, setNodes]
   );
 
   const onDragOver = (evt: DragEvent<HTMLDivElement>) => {
@@ -175,43 +181,83 @@ const Flow = ({ id, nodes: initialNodes, edges: initialEdges }: FlowProps) => {
   // this function is called when a node from the sidebar is dropped onto the react flow pane
   const onDrop: DragEventHandler = (evt: DragEvent<HTMLDivElement>) => {
     evt.preventDefault();
-    const str = evt.dataTransfer.getData("application/reactflow");
 
-    const renderable: Renderable = JSON.parse(str);
+    const type = evt.dataTransfer.getData("application/reactflow") as FlowNodeType['type'];
+
+    function nodeBase(type: FlowNodeType['type'], position: XYPosition): Required<Pick<FlowNodeType, 'type' | 'data' | 'position' | 'id'>> {
+      switch (type) {
+        case 'PolymorphicNode':
+          return {
+            id: uuidv4(),
+            type,
+            data: {
+              blocks: [],
+              accentColor: 'red'
+            },
+            position
+
+          }
+        case 'ShapeNode':
+          return {
+            id: uuidv4(),
+            type,
+            data: {
+              "type": "circle",
+              "color": "#438D57"
+            },
+            position
+
+          }
+        case 'default':
+        case 'input':
+        case 'output':
+          return {
+            id: uuidv4(),
+            type,
+            data: {
+              label: ''
+            },
+            position
+
+          }
+        default:
+          return {
+            id: uuidv4(),
+            type: 'default',
+            data: {
+              label: ''
+            },
+            position
+
+          }
+      }
+
+    }
 
     // this will convert the pixel position of the node to the react flow coordinate system
     // so that a node is added at the correct position even when viewport is translated and/or zoomed in
     const position = screenToFlowPosition({ x: evt.clientX, y: evt.clientY });
 
-    const newNode: PolymorphicNodeProps = {
-      id: uuidv4(),
-      type: "PolymorphicNode",
-      position,
-      style: { width: 100, height: 100 },
-      data: {
-        blocks: [renderable],
-        accentColor: "red",
-      },
-      selected: true,
-    };
+    const newNode: FlowNodeType = nodeBase(type, position)
 
-    setNodes((nodes) =>
-      nodes.map((n) => ({ ...n, selected: false })).concat([newNode])
+    setNodes((nds) =>
+      nds.map((node) => ({ ...node })).concat(newNode)
     );
+
+
   };
 
   const onSave = useCallback(() => {
     const flow = toObject();
-    console.log(flow);
 
     localStorage.setItem(id, JSON.stringify(flow));
-  }, [toObject]);
+  }, [toObject, id]);
 
   const onRestore = useCallback(() => {
     const restoreFlow = async () => {
       const str = localStorage.getItem(id);
       if (!str) return;
-      const flow: ReactFlowJsonObject<any, any> = JSON.parse(str);
+      const flow: ReactFlowJsonObject<FlowNodeType, FlowEdgeType> = JSON.parse(str);
 
       if (flow) {
         setNodes(flow.nodes);
@@ -268,7 +314,7 @@ const Flow = ({ id, nodes: initialNodes, edges: initialEdges }: FlowProps) => {
       }}
       style={{ width: "100%", height: "100%" }}
     >
-      <NodeContextMenu onCut={cut} onCopy={copy} onPaste={paste}>
+      <NodeContextMenu onCut={() => { }} onCopy={() => { }} onPaste={() => { }}>
         <ReactFlow
           className={styles.flow_wrapper}
           nodes={nodes}
@@ -311,9 +357,9 @@ const Flow = ({ id, nodes: initialNodes, edges: initialEdges }: FlowProps) => {
           />
           <MiniMap zoomable pannable />
           <Controls onSave={onSave} onRestore={onRestore} />
-          {/* <Panel position="top-left">
+          <Panel position="top-left">
             <Sidebar />
-          </Panel> */}
+          </Panel>
           <ConnectionStatus />
           <NodeToolbar
             nodeId={selectedNodes.map((node) => node.id)}
@@ -338,5 +384,6 @@ const FlowWrapper = (props: FlowProps) => {
   );
 };
 
-export { FlowWrapper };
+export { Flow, FlowWrapper };
 export type { FlowProps };
+

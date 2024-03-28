@@ -48,8 +48,8 @@ const d3HierarchyLayout: LayoutAlgorithm = async (nodes, edges, options) => {
     const nodeWithPosition = { ...node, ...node.position };
 
     initialNodes.push(nodeWithPosition);
-    maxNodeWidth = Math.max(maxNodeWidth, node.width ?? 0);
-    maxNodeHeight = Math.max(maxNodeHeight, node.height ?? 0);
+    maxNodeWidth = Math.max(maxNodeWidth, node?.computed?.width ?? 0);
+    maxNodeHeight = Math.max(maxNodeHeight, node?.computed?.height ?? 0);
   }
 
   // When the layout is horizontal, we swap the width and height measurements we

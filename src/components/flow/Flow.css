@@ -1,5 +1,4 @@
-.xy-flow__node {
-  background-color: red;
+.react-flow__node {
   &.selected {
     stroke: #0066ff;
     stroke-width: 2px;
@@ -8,24 +7,31 @@
   }
 }
 
-.xy-flow__handle {
+
+
+path.react-flow__edge-path {
+  stroke-width: 5;
 }
 
-.xy-flow__handle-top {
+
+.react-flow__handle {
 }
 
-.xy-flow__handle-right {
+.react-flow__handle-top {
 }
 
-.xy-flow__handle-bottom {
+.react-flow__handle-right {
 }
 
-.xy-flow__handle-left {
+.react-flow__handle-bottom {
 }
 
-.xy-flow__handle-connecting {
+.react-flow__handle-left {
 }
 
-.xy-flow__handle-valid {
+.react-flow__handle-connecting {
+}
+
+.react-flow__handle-valid {
   background-color: green;
 }

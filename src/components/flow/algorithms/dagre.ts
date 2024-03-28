@@ -12,8 +12,8 @@ const dagreLayout: LayoutAlgorithm = async (nodes, edges, options) => {
 
   for (const node of nodes) {
     dagreGraph.setNode(node.id, {
-      width: node.width ?? 0,
-      height: node.height ?? 0,
+      width: node.computed?.width ?? 0,
+      height: node.computed?.height ?? 0,
     });
 
     // Dagre currently has an open issue that prevents it from laying out sub-flows

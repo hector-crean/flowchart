@@ -1,11 +1,10 @@
 import { Link, RichTextEditor } from "@mantine/tiptap";
-import { Content, EditorContent, useEditor } from "@tiptap/react";
+import { Content, useEditor } from "@tiptap/react";
 import styles from "./RichText.module.css";
 
 // => Tiptap packages
 import StarterKit from "@tiptap/starter-kit";
 
-import { useClickOutside } from "@mantine/hooks";
 import Highlight from "@tiptap/extension-highlight";
 import SubScript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
@@ -14,14 +13,16 @@ import Underline from "@tiptap/extension-underline";
 import { Editor } from "@tiptap/react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { UuidV4 } from "..";
 
 interface RichTextProps {
   id: UuidV4;
   text: Content;
+  setContent?: (draft: Content) => void;
 }
 
-const RichText = ({ id, text }: RichTextProps) => {
+const RichText = ({ text, setContent }: RichTextProps) => {
   const [draft, setDraft] = useState(text);
 
   const [editing, setEditing] = useState(false);
@@ -42,40 +43,40 @@ const RichText = ({ id, text }: RichTextProps) => {
     },
   }) as Editor;
 
-  const containerRef = useClickOutside(() => setEditing(false));
 
-  const postDraftHandler = (blockId: UuidV4, draft: Content) => {
-    // POST request using fetch inside useEffect React hook
 
-    const payload = {
-      uuid: blockId,
-      props: {
-        text: draft,
-      },
-    };
-
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    };
-    fetch("http://localhost:1122/editor", requestOptions)
-      .then((response) => response.json())
-      .then((data) => console.log);
-
+  const postDraftHandler = (draft: Content) => {
+    if (setContent) setContent(draft)
     setEditing(false);
-  };
+
+  }
 
   return (
     <>
       <motion.div
         className={styles.rich_text_container}
-        onDoubleClick={() => {
-          setEditing(true);
-        }}
+        onDoubleClick={() => setEditing(true)}
       >
-        {editing ? (
-          <div className={styles.dialog_inner} ref={containerRef}>
+
+        <RichTextEditor
+          editor={editor}
+          classNames={{
+            root: styles.root,
+            content: styles.content,
+            toolbar: styles.toolbar,
+            typographyStylesProvider: styles.typographyStylesProvider,
+          }}
+        >
+          <RichTextEditor.Content />
+        </RichTextEditor>
+
+      </motion.div>
+
+      {editing && createPortal(
+        <>
+          <div
+            className={styles.modal}
+          >
             <RichTextEditor
               editor={editor}
               classNames={{
@@ -85,7 +86,7 @@ const RichText = ({ id, text }: RichTextProps) => {
                 typographyStylesProvider: styles.typographyStylesProvider,
               }}
             >
-              <RichTextEditor.Toolbar sticky stickyOffset={60}>
+              <RichTextEditor.Toolbar sticky stickyOffset={0}>
                 <RichTextEditor.ControlsGroup>
                   <RichTextEditor.Bold />
                   <RichTextEditor.Italic />
@@ -128,24 +129,26 @@ const RichText = ({ id, text }: RichTextProps) => {
                   <RichTextEditor.Undo />
                   <RichTextEditor.Redo />
                 </RichTextEditor.ControlsGroup>
+
+                <RichTextEditor.ControlsGroup>
+                  <button onPointerDown={() => postDraftHandler(draft)}>Publish</button>
+                </RichTextEditor.ControlsGroup>
               </RichTextEditor.Toolbar>
 
               <RichTextEditor.Content />
             </RichTextEditor>
-
-            <div className={styles.publish_container}>
-              <button onClick={() => postDraftHandler(id, draft)}>
-                Publish
-              </button>
-            </div>
           </div>
-        ) : (
-          <EditorContent editor={editor} />
-        )}
-      </motion.div>
+          <div className={styles.background} onPointerDown={() => setEditing(false)} />
+        </>
+        , document.body
+      )}
+
+
+
     </>
   );
 };
 
 export { RichText };
 export type { RichTextProps };
+

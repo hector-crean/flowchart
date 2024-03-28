@@ -1,0 +1,618 @@
+{
+  "nodes": [
+    {
+      "type": "RichTextNode",
+      "id": "3f2b0d4d-8af7-402e-a120-2beca42aa7ae",
+      "position": {
+        "x": 1600,
+        "y": 275
+      },
+      "width": 425,
+      "height": 400,
+      "data": {
+        "text": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "textAlign": "start",
+                "level": 1
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "Primary End Point"
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    },
+                    {
+                      "type": "superscript"
+                    }
+                  ],
+                  "text": "1"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "textAlign": "left"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "PFS"
+                        },
+                        {
+                          "type": "text",
+                          "marks": [
+                            {
+                              "type": "superscript"
+                            }
+                          ],
+                          "text": "a"
+                        },
+                        {
+                          "type": "text",
+                          "text": " by BICR in patients with grade 1 or 2 chondrosarcoma"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "computed": {
+        "positionAbsolute": {
+          "x": 1600,
+          "y": 275
+        },
+        "width": 425,
+        "height": 400
+      },
+      "style": {
+        "opacity": 1
+      },
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "type": "RichTextNode",
+      "id": "190f3b00-97f9-4772-98a2-43afc7b14218",
+      "position": {
+        "x": 1600,
+        "y": 250
+      },
+      "width": 400,
+      "height": 225,
+      "data": {
+        "text": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "textAlign": "start",
+                "level": 1
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "Secondary End points"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "computed": {
+        "positionAbsolute": {
+          "x": 1600,
+          "y": 250
+        },
+        "width": 400,
+        "height": 225
+      },
+      "style": {
+        "opacity": 1
+      },
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "selected": false,
+      "dragging": false,
+      "resizing": true
+    },
+    {
+      "type": "RichTextNode",
+      "id": "ad398dcf-2827-4060-a7f4-abcca2f9655d",
+      "position": {
+        "x": 1100,
+        "y": 475
+      },
+      "width": 275,
+      "height": 200,
+      "data": {
+        "text": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "textAlign": "start",
+                "level": 1
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "Ivosidenib"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": "start"
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "500 mg QD orally"
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    },
+                    {
+                      "type": "superscript"
+                    }
+                  ],
+                  "text": "1"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "computed": {
+        "positionAbsolute": {
+          "x": 1100,
+          "y": 475
+        },
+        "width": 275,
+        "height": 200
+      },
+      "style": {
+        "opacity": 1
+      },
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "selected": false,
+      "dragging": false,
+      "resizing": true
+    },
+    {
+      "type": "RichTextNode",
+      "id": "882c54b3-d358-4710-b540-e87d260d3670",
+      "position": {
+        "x": 1075,
+        "y": 150
+      },
+      "width": 375,
+      "height": 200,
+      "data": {
+        "text": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "textAlign": "start",
+                "level": 1
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "Placebo"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": "start"
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "Matched tablets QD orally"
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    },
+                    {
+                      "type": "superscript"
+                    }
+                  ],
+                  "text": "1"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "computed": {
+        "positionAbsolute": {
+          "x": 1075,
+          "y": 150
+        },
+        "width": 375,
+        "height": 200
+      },
+      "style": {
+        "opacity": 1
+      },
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "selected": false,
+      "dragging": false,
+      "resizing": true
+    },
+    {
+      "id": "3",
+      "type": "ShapeNode",
+      "position": {
+        "x": 40,
+        "y": 412.5
+      },
+      "style": {
+        "width": 80,
+        "height": 80,
+        "opacity": 1
+      },
+      "data": {
+        "type": "circle",
+        "color": "#438D57"
+      },
+      "computed": {
+        "positionAbsolute": {
+          "x": 40,
+          "y": 412.5
+        },
+        "width": 80,
+        "height": 80
+      },
+      "selected": false,
+      "dragging": false,
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    },
+    {
+      "type": "RichTextNode",
+      "id": "2c4ed479-67b8-4e08-a3d0-ad592da11679",
+      "position": {
+        "x": 420,
+        "y": 240
+      },
+      "width": 450,
+      "height": 425,
+      "data": {
+        "text": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "textAlign": "left",
+                "level": 1
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Key Eligibility Criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "textAlign": "left"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "≥18 years of age"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "textAlign": "left"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Grade 1, 2, or 3 locally advanced or metastatic conventional chondrosarcoma and ineligible for resection"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "textAlign": "left"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Documented mIDH1 disease by central laboratory testing"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "textAlign": "left"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Received 0 or 1 prior systemic treatment regimens in the advanced/metastatic setting for chondrosarcoma"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "textAlign": "left"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Radiographic progression/recurrence of disease according to RECIST v1.1"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "computed": {
+        "positionAbsolute": {
+          "x": 420,
+          "y": 240
+        },
+        "width": 450,
+        "height": 425
+      },
+      "style": {
+        "opacity": 1
+      },
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "selected": false,
+      "dragging": false,
+      "resizing": true
+    }
+  ],
+  "edges": [
+    {
+      "type": "PolymorphicEdge",
+      "data": {
+        "label": "Here is an edge label"
+      },
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "pathOptions": {
+        "offset": 5
+      },
+      "source": "3",
+      "sourceHandle": "right",
+      "target": "2c4ed479-67b8-4e08-a3d0-ad592da11679",
+      "targetHandle": "b",
+      "id": "xy-edge__3right-2c4ed479-67b8-4e08-a3d0-ad592da11679b",
+      "style": {
+        "opacity": 1
+      },
+      "selected": false
+    },
+    {
+      "type": "PolymorphicEdge",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "pathOptions": {
+        "offset": 5
+      },
+      "source": "2c4ed479-67b8-4e08-a3d0-ad592da11679",
+      "sourceHandle": "a",
+      "target": "ad398dcf-2827-4060-a7f4-abcca2f9655d",
+      "targetHandle": "b",
+      "id": "xy-edge__2c4ed479-67b8-4e08-a3d0-ad592da11679a-ad398dcf-2827-4060-a7f4-abcca2f9655db",
+      "style": {
+        "opacity": 1
+      },
+      "selected": false
+    },
+    {
+      "type": "PolymorphicEdge",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "pathOptions": {
+        "offset": 5
+      },
+      "source": "882c54b3-d358-4710-b540-e87d260d3670",
+      "sourceHandle": "c",
+      "target": "ad398dcf-2827-4060-a7f4-abcca2f9655d",
+      "targetHandle": "d",
+      "id": "xy-edge__882c54b3-d358-4710-b540-e87d260d3670c-ad398dcf-2827-4060-a7f4-abcca2f9655dd",
+      "style": {
+        "opacity": 1
+      },
+      "selected": false
+    },
+    {
+      "type": "PolymorphicEdge",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "pathOptions": {
+        "offset": 5
+      },
+      "source": "ad398dcf-2827-4060-a7f4-abcca2f9655d",
+      "sourceHandle": "c",
+      "target": "882c54b3-d358-4710-b540-e87d260d3670",
+      "targetHandle": "d",
+      "id": "xy-edge__ad398dcf-2827-4060-a7f4-abcca2f9655dc-882c54b3-d358-4710-b540-e87d260d3670d",
+      "style": {
+        "opacity": 1
+      },
+      "selected": false
+    },
+    {
+      "type": "PolymorphicEdge",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "pathOptions": {
+        "offset": 5
+      },
+      "source": "2c4ed479-67b8-4e08-a3d0-ad592da11679",
+      "sourceHandle": "a",
+      "target": "882c54b3-d358-4710-b540-e87d260d3670",
+      "targetHandle": "b",
+      "id": "xy-edge__2c4ed479-67b8-4e08-a3d0-ad592da11679a-882c54b3-d358-4710-b540-e87d260d3670b",
+      "style": {
+        "opacity": 1
+      },
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "pathOptions": {
+        "offset": 5
+      },
+      "source": "882c54b3-d358-4710-b540-e87d260d3670",
+      "sourceHandle": "a",
+      "target": "190f3b00-97f9-4772-98a2-43afc7b14218",
+      "targetHandle": "b",
+      "id": "xy-edge__882c54b3-d358-4710-b540-e87d260d3670a-190f3b00-97f9-4772-98a2-43afc7b14218b",
+      "style": {
+        "opacity": 1
+      },
+      "selected": false
+    },
+    {
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "pathOptions": {
+        "offset": 5
+      },
+      "source": "ad398dcf-2827-4060-a7f4-abcca2f9655d",
+      "sourceHandle": "a",
+      "target": "3f2b0d4d-8af7-402e-a120-2beca42aa7ae",
+      "targetHandle": "b",
+      "id": "xy-edge__ad398dcf-2827-4060-a7f4-abcca2f9655da-3f2b0d4d-8af7-402e-a120-2beca42aa7aeb",
+      "style": {
+        "opacity": 1
+      },
+      "selected": false
+    }
+  ],
+  "viewport": {
+    "x": -224.93467722515425,
+    "y": -41.031452974177796,
+    "zoom": 0.7110387052936373
+  }
+}

@@ -1,7 +1,7 @@
 .validationflow {
 }
 
-.validationflow :global .xy-flow__node {
+.validationflow :global .react-flow__node {
   width: 150px;
   border-radius: 5px;
   padding: 10px;
@@ -11,16 +11,16 @@
   font-size: 12px;
 }
 
-.validationflow :global .xy-flow__node-customnode {
+.validationflow :global .react-flow__node-customnode {
   background: #e6e6e9;
   border: 1px solid #ddd;
 }
 
-.validationflow :global .xy-flow__node-custominput .xy-flow__handle {
+.validationflow :global .react-flow__node-custominput .react-flow__handle {
   background: #e6e6e9;
 }
 
-.validationflow :global .xy-flow__node-custominput {
+.validationflow :global .react-flow__node-custominput {
   background: #fff;
 }
 
@@ -28,7 +28,7 @@
   background: #ff6060;
 }
 
-.validationflow :global .xy-flow__node-custominput .connectingfrom {
+.validationflow :global .react-flow__node-custominput .connectingfrom {
   background: #55dd99;
 }
 
@@ -36,11 +36,11 @@
   background: #55dd99;
 }
 
-.validationflow :global .valid .xy-flow__connection-path {
+.validationflow :global .valid .react-flow__connection-path {
   stroke: #55dd99;
 }
 
-.validationflow :global .invalid .xy-flow__connection-path {
+.validationflow :global .invalid .react-flow__connection-path {
   stroke: #ff6060;
 }
 

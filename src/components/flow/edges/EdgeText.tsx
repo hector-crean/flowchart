@@ -21,7 +21,7 @@ function EdgeTextComponent({
     width: 0,
     height: 0,
   });
-  const edgeTextClasses = cc(["xy-flow__edge-textwrapper", className]);
+  const edgeTextClasses = cc(["react-flow__edge-textwrapper", className]);
 
   const onEdgeTextRefChange = useCallback((edgeRef: SVGTextElement) => {
     if (edgeRef === null) return;
@@ -42,9 +42,8 @@ function EdgeTextComponent({
 
   return (
     <g
-      transform={`translate(${x - edgeTextBbox.width / 2} ${
-        y - edgeTextBbox.height / 2
-      })`}
+      transform={`translate(${x - edgeTextBbox.width / 2} ${y - edgeTextBbox.height / 2
+        })`}
       className={edgeTextClasses}
       visibility={edgeTextBbox.width ? "visible" : "hidden"}
       {...rest}
@@ -55,14 +54,14 @@ function EdgeTextComponent({
           x={-labelBgPadding[0]}
           y={-labelBgPadding[1]}
           height={edgeTextBbox.height + 2 * labelBgPadding[1]}
-          className="xy-flow__edge-textbg"
+          className="react-flow__edge-textbg"
           style={labelBgStyle}
           rx={labelBgBorderRadius}
           ry={labelBgBorderRadius}
         />
       )}
       <text
-        className="xy-flow__edge-text"
+        className="react-flow__edge-text"
         y={edgeTextBbox.height / 2}
         dy="0.3em"
         ref={onEdgeTextRefChange}

@@ -26,8 +26,8 @@ const elkLayout: LayoutAlgorithm = async (nodes, edges, options) => {
     },
     children: nodes.map((node) => ({
       id: node.id,
-      width: node.width ?? 0,
-      height: node.height ?? 0,
+      width: node.computed?.width ?? 0,
+      height: node.computed?.height ?? 0,
     })),
     edges: edges.map((edge) => ({
       id: edge.id,

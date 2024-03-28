@@ -1,19 +1,21 @@
-import { Renderable, render } from "@/components";
+import clsx from "clsx";
 import { useRef, type DragEvent } from "react";
+import { FlowNodeType } from "../types";
 import styles from "./SidebarItem.module.css";
 
 type SidebarItemProps = {
-  renderable: Renderable;
+  type: FlowNodeType['type'];
 };
 
-function SidebarItem({ renderable }: SidebarItemProps) {
+function SidebarItem({ type }: SidebarItemProps) {
   const dragImageRef = useRef<HTMLDivElement>(null);
 
-  const onDragStart = (event: DragEvent<HTMLDivElement>) => {
+  const onDragStart = (event: DragEvent<HTMLDivElement>, type: FlowNodeType['type']) => {
     event.dataTransfer?.setData(
       "application/reactflow",
-      JSON.stringify(renderable)
+      type ?? 'default'
     );
+    event.dataTransfer.effectAllowed = 'move';
 
     if (dragImageRef.current) {
       event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
@@ -21,11 +23,8 @@ function SidebarItem({ renderable }: SidebarItemProps) {
   };
 
   return (
-    <div className={styles.sidebar_item} draggable onDragStart={onDragStart}>
-      {render(renderable)}
-      <div className={styles.sidebar_item_drag_image} ref={dragImageRef}>
-        {render(renderable)}
-      </div>
+    <div className={clsx([styles.sidebar_item, 'react-flow__node-default'])} draggable onDragStart={e => onDragStart(e, type)}>
+      {type}
     </div>
   );
 }

@@ -10,10 +10,9 @@ type ShapeNodeData = {
 
 type ShapeNodeType = Node<ShapeNodeData, "ShapeNode">;
 
-function ShapeNode({ id, selected, data }: NodeProps<ShapeNodeType>) {
+function ShapeNode({ id, selected, data, width, height, }: NodeProps<ShapeNodeType>) {
   const { color, type } = data;
 
-  const { width, height } = useNodeDimensions(id);
   const handleStyle = { backgroundColor: color };
 
   return (
@@ -66,3 +65,4 @@ function useNodeDimensions(id: string) {
 
 export { ShapeNode };
 export type { ShapeNodeType };
+

@@ -112,7 +112,7 @@ function ControlsComponent({
 
   return (
     <Panel
-      // className={cc(["xy-flow__controls", className])}
+      // className={cc(["react-flow__controls", className])}
       className={styles.control_bar_container}
       position={position}
       style={style}

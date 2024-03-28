@@ -6,10 +6,8 @@ import {
   useStore,
 } from "@xyflow/react";
 import cc from "classcat";
-import { curveBumpX, link } from "d3-shape";
 import { motion } from "framer-motion";
 
-const linkGenerator = link(curveBumpX);
 
 const draw = {
   hidden: {
@@ -31,18 +29,15 @@ const draw = {
   },
 };
 
-type PolymorphicEdgeData = Record<string, unknown>;
+type PolymorphicEdgeData = {
+  label: string;
+}
 
 type PolymorphicEdgeType = Edge<PolymorphicEdgeData>;
 
 function PolymorphicEdge({
+  data,
   id,
-  label,
-  labelStyle,
-  labelShowBg,
-  labelBgStyle,
-  labelBgPadding,
-  labelBgBorderRadius,
   sourcePosition,
   targetPosition,
   target,
@@ -76,7 +71,7 @@ function PolymorphicEdge({
         style={style}
         d={edgePath}
         fill="none"
-        className={cc(["xy-flow__edge-path"])}
+        className={cc(["react-flow__edge-path"])}
         markerEnd={markerEnd}
         markerStart={markerStart}
         stroke="#222"
@@ -93,10 +88,10 @@ function PolymorphicEdge({
           fill="none"
           strokeOpacity={0}
           strokeWidth={interactionWidth}
-          className="xy-flow__edge-interaction"
+          className="react-flow__edge-interaction"
         />
       )}
-      <EdgeLabelRenderer>
+      {Boolean(data?.label) && <EdgeLabelRenderer>
         <div
           style={{
             position: "absolute",
@@ -107,9 +102,9 @@ function PolymorphicEdge({
             zIndex: isConnectedNodeDragging ? 10 : 0,
           }}
         >
-          {label}
+          {data?.label}
         </div>
-      </EdgeLabelRenderer>
+      </EdgeLabelRenderer>}
       {/* <EdgeText
         x={labelX}
         y={labelY}

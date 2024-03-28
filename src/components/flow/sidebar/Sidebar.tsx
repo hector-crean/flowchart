@@ -1,21 +1,13 @@
-import { Renderable } from "@/components";
+import styles from "./Sidebar.module.css";
 import SidebarItem from "./SidebarItem";
-import styles from "./SidebarItem.module.css";
 
-const defaultRenderable: Renderable = {
-  type: "RichText",
-  id: "a570a324-7009-4c83-8aa0-44c204629443",
-  props: {
-    text: "",
-  },
-};
+
 function Sidebar() {
   return (
-    <div className="sidebar">
-      <div className="sidebar-label">Drag shapes to the canvas</div>
+    <div className={styles.sidebar}>
       <div className={styles.sidebar_items}>
         <SidebarItem
-          renderable={defaultRenderable}
+          type={'RichTextNode'}
           key={"default-renderable"}
         />
       </div>
